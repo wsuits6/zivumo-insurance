@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Zivumo Insurance</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <h1>Zivumo</h1>
+                        <span class="logo-subtitle">Insurance</span>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <a href="../index.html#features" class="nav-link">Features</a>
+                    <a href="../index.html#about" class="nav-link">About</a>
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="btn btn-primary active">Get Started</a>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Section -->
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1>Create Your Account</h1>
+                        <p>Join Zivumo and start protecting what matters most</p>
+                    </div>
+
+                    <form class="auth-form" id="signupForm">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                placeholder="John Doe"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="your.email@example.com"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="Create a strong password"
+                                required
+                                minlength="8"
+                            >
+                            <small class="form-hint">At least 8 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                placeholder="Re-enter your password"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="terms" required>
+                                <span>I agree to the <a href="#" class="link-primary">Terms of Service</a> and <a href="#" class="link-primary">Privacy Policy</a></span>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="login.html" class="link-primary">Sign in here</a></p>
+                    </div>
+                </div>
+
+                <div class="auth-visual">
+                    <div class="visual-card">
+                        <div class="visual-icon">🚀</div>
+                        <h3>Get Started in Minutes</h3>
+                        <p>Create your account and gain instant access to comprehensive insurance management tools.</p>
+                    </div>
+                    <div class="visual-features">
+                        <div class="visual-feature">
+                            <span class="feature-bullet">✓</span>
+                            <p>Easy Policy Setup</p>
+                        </div>
+                        <div class="visual-feature">
+                            <span class="feature-bullet">✓</span>
+                            <p>Instant Dashboard Access</p>
+                        </div>
+                        <div class="visual-feature">
+                            <span class="feature-bullet">✓</span>
+                            <p>No Hidden Fees</p>
+                        </div>
+                        <div class="visual-feature">
+                            <span class="feature-bullet">✓</span>
+                            <p>24/7 Support</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Zivumo Insurance</h3>
+                    <p>Trust, Security, Protection</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="../index.html#features">Features</a>
+                        <a href="../index.html#about">About</a>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Account</h4>
+                        <a href="login.html">Login</a>
+                        <a href="signup.html">Sign Up</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Zivumo Insurance. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

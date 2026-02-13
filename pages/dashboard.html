@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Zivumo Insurance</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <h1>Zivumo</h1>
+                        <span class="logo-subtitle">Insurance</span>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                    <a href="#" class="nav-link">My Policies</a>
+                    <a href="#" class="nav-link">Profile</a>
+                    <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <section class="dashboard-header">
+        <div class="container">
+            <div class="dashboard-welcome">
+                <h1>Welcome back, <span id="userName">John Doe</span></h1>
+                <p>Manage your policies and stay protected</p>
+            </div>
+            <div class="dashboard-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <h3 id="totalPolicies">4</h3>
+                        <p>Total Policies</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <h3 id="activePolicies">3</h3>
+                        <p>Active Policies</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-info">
+                        <h3 id="pendingRenewals">1</h3>
+                        <p>Pending Renewals</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔔</div>
+                    <div class="stat-info">
+                        <h3 id="notifications">2</h3>
+                        <p>Notifications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Policies Section -->
+    <section class="dashboard-content">
+        <div class="container">
+            <div class="section-title">
+                <h2>Your Policies</h2>
+                <button class="btn btn-primary">Add New Policy</button>
+            </div>
+
+            <!-- Policy Cards Grid -->
+            <div class="policies-grid" id="policiesGrid">
+                
+                <!-- Health Insurance Policy -->
+                <div class="policy-card">
+                    <div class="policy-header">
+                        <div class="policy-type">
+                            <div class="policy-icon">🏥</div>
+                            <div>
+                                <h3>Health Insurance</h3>
+                                <p class="policy-number">Policy #HLT-2024-001</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div class="policy-body">
+                        <div class="policy-detail">
+                            <span class="detail-label">Coverage</span>
+                            <span class="detail-value">Comprehensive Family Plan</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">Jan 15, 2024</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Expiration Date</span>
+                            <span class="detail-value">Jan 15, 2025</span>
+                        </div>
+                        <div class="policy-timeline">
+                            <div class="timeline-bar">
+                                <div class="timeline-progress" style="width: 65%"></div>
+                            </div>
+                            <span class="timeline-text">120 days remaining</span>
+                        </div>
+                    </div>
+                    <div class="policy-footer">
+                        <button class="btn btn-secondary btn-sm">View Details</button>
+                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                    </div>
+                </div>
+
+                <!-- Auto Insurance Policy -->
+                <div class="policy-card">
+                    <div class="policy-header">
+                        <div class="policy-type">
+                            <div class="policy-icon">🚗</div>
+                            <div>
+                                <h3>Auto Insurance</h3>
+                                <p class="policy-number">Policy #AUTO-2024-002</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div class="policy-body">
+                        <div class="policy-detail">
+                            <span class="detail-label">Coverage</span>
+                            <span class="detail-value">Full Coverage - Toyota Camry</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">Mar 10, 2024</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Expiration Date</span>
+                            <span class="detail-value">Mar 10, 2025</span>
+                        </div>
+                        <div class="policy-timeline">
+                            <div class="timeline-bar">
+                                <div class="timeline-progress" style="width: 75%"></div>
+                            </div>
+                            <span class="timeline-text">175 days remaining</span>
+                        </div>
+                    </div>
+                    <div class="policy-footer">
+                        <button class="btn btn-secondary btn-sm">View Details</button>
+                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                    </div>
+                </div>
+
+                <!-- Home Insurance Policy -->
+                <div class="policy-card">
+                    <div class="policy-header">
+                        <div class="policy-type">
+                            <div class="policy-icon">🏠</div>
+                            <div>
+                                <h3>Home Insurance</h3>
+                                <p class="policy-number">Policy #HOME-2024-003</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div class="policy-body">
+                        <div class="policy-detail">
+                            <span class="detail-label">Coverage</span>
+                            <span class="detail-value">Property & Contents</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">Feb 01, 2024</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Expiration Date</span>
+                            <span class="detail-value">Feb 01, 2025</span>
+                        </div>
+                        <div class="policy-timeline">
+                            <div class="timeline-bar">
+                                <div class="timeline-progress" style="width: 70%"></div>
+                            </div>
+                            <span class="timeline-text">145 days remaining</span>
+                        </div>
+                    </div>
+                    <div class="policy-footer">
+                        <button class="btn btn-secondary btn-sm">View Details</button>
+                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                    </div>
+                </div>
+
+                <!-- Life Insurance Policy - Expiring Soon -->
+                <div class="policy-card">
+                    <div class="policy-header">
+                        <div class="policy-type">
+                            <div class="policy-icon">💼</div>
+                            <div>
+                                <h3>Life Insurance</h3>
+                                <p class="policy-number">Policy #LIFE-2023-004</p>
+                            </div>
+                        </div>
+                        <span class="badge badge-warning">Expiring Soon</span>
+                    </div>
+                    <div class="policy-body">
+                        <div class="policy-detail">
+                            <span class="detail-label">Coverage</span>
+                            <span class="detail-value">Term Life - $500,000</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Start Date</span>
+                            <span class="detail-value">Oct 20, 2023</span>
+                        </div>
+                        <div class="policy-detail">
+                            <span class="detail-label">Expiration Date</span>
+                            <span class="detail-value">Oct 20, 2024</span>
+                        </div>
+                        <div class="policy-timeline">
+                            <div class="timeline-bar">
+                                <div class="timeline-progress warning" style="width: 15%"></div>
+                            </div>
+                            <span class="timeline-text">28 days remaining</span>
+                        </div>
+                    </div>
+                    <div class="policy-footer">
+                        <button class="btn btn-secondary btn-sm">View Details</button>
+                        <button class="btn btn-alert btn-sm">Renew Now</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Zivumo Insurance</h3>
+                    <p>Trust, Security, Protection</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="../index.html#features">Features</a>
+                        <a href="../index.html#about">About</a>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Account</h4>
+                        <a href="login.html">Login</a>
+                        <a href="signup.html">Sign Up</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Zivumo Insurance. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>
