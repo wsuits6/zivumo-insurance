@@ -26,10 +26,9 @@ class ThemeManager {
         this.currentTheme = theme;
         localStorage.setItem('theme', theme);
         
-        // Update theme icon
         if (this.themeToggle) {
-            const icon = this.themeToggle.querySelector('.theme-icon');
-            icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            const label = theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
+            this.themeToggle.setAttribute('aria-label', label);
         }
     }
 
@@ -50,6 +49,30 @@ class FormValidator {
 
     init() {
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.setupDemoLogin();
+    }
+
+    setupDemoLogin() {
+        if (this.form.id !== 'loginForm') return;
+
+        const demoLoginBtn = document.getElementById('demoLoginBtn');
+        if (!demoLoginBtn) return;
+
+        demoLoginBtn.addEventListener('click', () => {
+            const emailInput = this.form.querySelector('#email');
+            const passwordInput = this.form.querySelector('#password');
+            if (emailInput) emailInput.value = 'demo@zivumo.com';
+            if (passwordInput) passwordInput.value = 'Zivumo123!';
+            this.showMessage('Signing you in with demo account...', 'success');
+            localStorage.setItem('user', JSON.stringify({
+                id: 1,
+                name: 'Demo User',
+                email: 'demo@zivumo.com'
+            }));
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 800);
+        });
     }
 
     handleSubmit(e) {
@@ -78,19 +101,23 @@ class FormValidator {
             return;
         }
 
-        // Simulate login (in real app, this would call an API)
-        this.showMessage('Login successful! Redirecting...', 'success');
-        
-        // Store user data in localStorage (simulation)
-        localStorage.setItem('user', JSON.stringify({
-            email: data.email,
-            name: 'John Doe' // In real app, this would come from server
-        }));
+        const payload = { email: data.email, password: data.password };
+        this.showMessage('Signing you in...', 'success');
 
-        // Redirect to dashboard
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        apiRequest('/api/login', 'POST', payload)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.message || 'Login failed');
+                }
+                localStorage.setItem('user', JSON.stringify(response.data));
+                this.showMessage('Login successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            })
+            .catch((error) => {
+                this.showMessage(error.message, 'error');
+            });
     }
 
     handleSignup(data) {
@@ -120,12 +147,27 @@ class FormValidator {
             return;
         }
 
-        // Simulate signup
-        this.showMessage('Account created successfully! Redirecting to login...', 'success');
-        
-        setTimeout(() => {
-            window.location.href = 'login.html';
-        }, 1500);
+        const payload = {
+            name: data.fullName,
+            email: data.email,
+            password: data.password
+        };
+
+        this.showMessage('Creating your account...', 'success');
+
+        apiRequest('/api/signup', 'POST', payload)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.message || 'Signup failed');
+                }
+                this.showMessage('Account created! Redirecting to login...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+            })
+            .catch((error) => {
+                this.showMessage(error.message, 'error');
+            });
     }
 
     isValidEmail(email) {
@@ -202,14 +244,12 @@ class Dashboard {
         
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
-                // Clear user data
-                localStorage.removeItem('user');
-                
-                // Show message
-                alert('You have been logged out successfully');
-                
-                // Redirect to home page
-                window.location.href = '../index.html';
+                apiRequest('/api/logout', 'POST')
+                    .finally(() => {
+                        localStorage.removeItem('user');
+                        alert('You have been logged out successfully');
+                        window.location.href = '../index.html';
+                    });
             });
         }
     }
@@ -241,7 +281,7 @@ class PolicyManager {
                 const isUrgent = e.target.classList.contains('btn-alert');
                 
                 const message = isUrgent 
-                    ? `⚠️ URGENT RENEWAL\n\nPolicy: ${policyName}\n\nThis policy is expiring soon! Would you like to proceed with renewal?`
+                    ? `URGENT RENEWAL\n\nPolicy: ${policyName}\n\nThis policy is expiring soon. Would you like to proceed with renewal?`
                     : `Policy Renewal\n\nPolicy: ${policyName}\n\nWould you like to renew this policy?`;
                 
                 const confirmed = confirm(message);
@@ -278,7 +318,7 @@ class PolicyManager {
         timelineText.textContent = '365 days remaining';
 
         // Show success message
-        alert(`✅ Renewal Successful!\n\n${policyName} has been renewed for another year.`);
+        alert(`Renewal Successful!\n\n${policyName} has been renewed for another year.`);
     }
 }
 
@@ -325,9 +365,79 @@ document.addEventListener('DOMContentLoaded', () => {
     new FormValidator('signupForm');
 
     // Initialize dashboard (if on dashboard page)
-    if (window.location.pathname.includes('dashboard.html')) {
+    if (window.location.pathname.includes('dashboard.html') || window.location.pathname.includes('account-settings.html')) {
         new Dashboard();
         new PolicyManager();
+    }
+
+    // Load and submit account settings
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
+        apiRequest('/api/account', 'GET')
+            .then((response) => {
+                if (!response.ok) return;
+                const { name, email, phone, address, preferences } = response.data;
+                const nameInput = document.getElementById('settingsName');
+                const emailInput = document.getElementById('settingsEmail');
+                const phoneInput = document.getElementById('settingsPhone');
+                const addressInput = document.getElementById('settingsAddress');
+                const renewalsInput = document.getElementById('notifyRenewals');
+                const claimsInput = document.getElementById('notifyClaims');
+                const announcementsInput = document.getElementById('notifyAnnouncements');
+
+                if (nameInput && name) nameInput.value = name;
+                if (emailInput && email) emailInput.value = email;
+                if (phoneInput && phone) phoneInput.value = phone;
+                if (addressInput && address) addressInput.value = address;
+                if (preferences && typeof preferences === 'object') {
+                    if (renewalsInput) renewalsInput.checked = !!preferences.renewals;
+                    if (claimsInput) claimsInput.checked = !!preferences.claims;
+                    if (announcementsInput) announcementsInput.checked = !!preferences.announcements;
+                }
+            });
+
+        settingsForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const payload = {
+                name: document.getElementById('settingsName').value.trim(),
+                email: document.getElementById('settingsEmail').value.trim(),
+                phone: document.getElementById('settingsPhone').value.trim(),
+                address: document.getElementById('settingsAddress').value.trim()
+            };
+
+            apiRequest('/api/account', 'POST', payload)
+                .then((response) => {
+                    alert(response.message || 'Settings updated.');
+                })
+                .catch(() => alert('Unable to update settings right now.'));
+        });
+    }
+
+    const settingsPreferencesBtn = document.getElementById('settingsPreferences');
+    if (settingsPreferencesBtn) {
+        settingsPreferencesBtn.addEventListener('click', () => {
+            const payload = {
+                renewals: document.getElementById('notifyRenewals')?.checked ?? false,
+                claims: document.getElementById('notifyClaims')?.checked ?? false,
+                announcements: document.getElementById('notifyAnnouncements')?.checked ?? false
+            };
+
+            apiRequest('/api/preferences', 'POST', payload)
+                .then((response) => {
+                    alert(response.message || 'Preferences updated.');
+                });
+        });
+    }
+
+    // Mobile nav toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('nav-open');
+            const expanded = navLinks.classList.contains('nav-open');
+            navToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        });
     }
 
     // Add animation to cards on scroll
@@ -354,6 +464,28 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(card);
     });
 });
+
+// === API CLIENT ===
+const API_BASE = window.location.port === '5500'
+    ? 'http://127.0.0.1:8000'
+    : '/backend/public/index.php';
+
+function apiRequest(path, method = 'GET', body = null) {
+    const options = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) {
+        options.body = JSON.stringify(body);
+    }
+
+    return fetch(`${API_BASE}${path}`, options)
+        .then((response) =>
+            response.json().then((data) => ({
+                ...data,
+                ok: typeof data.ok === 'boolean' ? data.ok : response.ok,
+                status: response.status
+            }))
+        )
+        .catch(() => ({ ok: false, message: 'Network error' }));
+}
 
 // === UTILITY FUNCTIONS ===
 const utils = {

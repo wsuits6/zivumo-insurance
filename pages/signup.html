@@ -1,4 +1,4 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +6,9 @@
     <title>Sign Up - Zivumo Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -28,8 +31,19 @@
                     <a href="login.html" class="nav-link">Login</a>
                     <a href="signup.html" class="btn btn-primary active">Get Started</a>
                 </div>
+                <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <span class="theme-icon">🌙</span>
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -42,52 +56,56 @@
                 <div class="auth-card">
                     <div class="auth-header">
                         <h1>Create Your Account</h1>
-                        <p>Join Zivumo and start protecting what matters most</p>
+                        <p>Join Zivumo and start protecting what matters most with confidence.</p>
                     </div>
 
                     <form class="auth-form" id="signupForm">
                         <div class="form-group">
                             <label for="fullName">Full Name</label>
-                            <input 
-                                type="text" 
-                                id="fullName" 
-                                name="fullName" 
+                            <input
+                                type="text"
+                                id="fullName"
+                                name="fullName"
                                 placeholder="John Doe"
+                                autocomplete="name"
                                 required
                             >
                         </div>
 
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
                                 placeholder="your.email@example.com"
+                                autocomplete="email"
                                 required
                             >
                         </div>
 
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password" 
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
                                 placeholder="Create a strong password"
+                                autocomplete="new-password"
                                 required
                                 minlength="8"
                             >
-                            <small class="form-hint">At least 8 characters</small>
+                            <small class="form-hint">At least 8 characters with one symbol</small>
                         </div>
 
                         <div class="form-group">
                             <label for="confirmPassword">Confirm Password</label>
-                            <input 
-                                type="password" 
-                                id="confirmPassword" 
-                                name="confirmPassword" 
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
                                 placeholder="Re-enter your password"
+                                autocomplete="new-password"
                                 required
                             >
                         </div>
@@ -109,26 +127,48 @@
 
                 <div class="auth-visual">
                     <div class="visual-card">
-                        <div class="visual-icon">🚀</div>
+                        <div class="icon-wrap secondary">
+                            <svg class="icon icon-lg" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M5 19l4-4"></path>
+                                <path d="M5 19l3 3 4-4"></path>
+                                <path d="M15 5l4-1-1 4-9 9-4 1 1-4 9-9z"></path>
+                            </svg>
+                        </div>
                         <h3>Get Started in Minutes</h3>
                         <p>Create your account and gain instant access to comprehensive insurance management tools.</p>
                     </div>
                     <div class="visual-features">
                         <div class="visual-feature">
-                            <span class="feature-bullet">✓</span>
-                            <p>Easy Policy Setup</p>
+                            <span class="feature-bullet">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <p>Easy policy setup</p>
                         </div>
                         <div class="visual-feature">
-                            <span class="feature-bullet">✓</span>
-                            <p>Instant Dashboard Access</p>
+                            <span class="feature-bullet">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <p>Instant dashboard access</p>
                         </div>
                         <div class="visual-feature">
-                            <span class="feature-bullet">✓</span>
-                            <p>No Hidden Fees</p>
+                            <span class="feature-bullet">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <p>No hidden fees</p>
                         </div>
                         <div class="visual-feature">
-                            <span class="feature-bullet">✓</span>
-                            <p>24/7 Support</p>
+                            <span class="feature-bullet">
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </span>
+                            <p>24/7 support</p>
                         </div>
                     </div>
                 </div>
@@ -155,6 +195,7 @@
                         <h4>Account</h4>
                         <a href="login.html">Login</a>
                         <a href="signup.html">Sign Up</a>
+                        <a href="account-settings.html">Account Settings</a>
                     </div>
                     <div class="footer-column">
                         <h4>Support</h4>
@@ -164,7 +205,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Zivumo Insurance. All rights reserved.</p>
+                <p>&copy; 2026 Zivumo Insurance. All rights reserved.</p>
             </div>
         </div>
     </footer>

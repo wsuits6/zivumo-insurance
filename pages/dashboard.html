@@ -6,6 +6,9 @@
     <title>Dashboard - Zivumo Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -24,11 +27,22 @@
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-link active">Dashboard</a>
                     <a href="#" class="nav-link">My Policies</a>
-                    <a href="#" class="nav-link">Profile</a>
+                    <a href="account-settings.html" class="nav-link">Account Settings</a>
                     <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
                 </div>
+                <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <span class="theme-icon">🌙</span>
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -39,32 +53,52 @@
         <div class="container">
             <div class="dashboard-welcome">
                 <h1>Welcome back, <span id="userName">John Doe</span></h1>
-                <p>Manage your policies and stay protected</p>
+                <p>Manage your policies, renewals, and coverage insights in one place.</p>
             </div>
             <div class="dashboard-stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">📋</div>
+                    <div class="icon-wrap">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 3h6a2 2 0 0 1 2 2v2H7V5a2 2 0 0 1 2-2z"></path>
+                            <rect x="5" y="7" width="14" height="14" rx="2"></rect>
+                        </svg>
+                    </div>
                     <div class="stat-info">
                         <h3 id="totalPolicies">4</h3>
                         <p>Total Policies</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">✅</div>
+                    <div class="icon-wrap secondary">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 12l3 3 5-5"></path>
+                        </svg>
+                    </div>
                     <div class="stat-info">
                         <h3 id="activePolicies">3</h3>
                         <p>Active Policies</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">⏰</div>
+                    <div class="icon-wrap accent">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v6l4 2"></path>
+                        </svg>
+                    </div>
                     <div class="stat-info">
                         <h3 id="pendingRenewals">1</h3>
                         <p>Pending Renewals</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🔔</div>
+                    <div class="icon-wrap">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
                     <div class="stat-info">
                         <h3 id="notifications">2</h3>
                         <p>Notifications</p>
@@ -84,12 +118,16 @@
 
             <!-- Policy Cards Grid -->
             <div class="policies-grid" id="policiesGrid">
-                
+
                 <!-- Health Insurance Policy -->
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
-                            <div class="policy-icon">🏥</div>
+                            <div class="icon-wrap">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M12 21s-8-4-8-10a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6-8 10-8 10z"></path>
+                                </svg>
+                            </div>
                             <div>
                                 <h3>Health Insurance</h3>
                                 <p class="policy-number">Policy #HLT-2024-001</p>
@@ -127,7 +165,14 @@
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
-                            <div class="policy-icon">🚗</div>
+                            <div class="icon-wrap secondary">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 16l1-5 3-4h10l3 4 1 5"></path>
+                                    <circle cx="7.5" cy="16.5" r="1.5"></circle>
+                                    <circle cx="16.5" cy="16.5" r="1.5"></circle>
+                                    <path d="M3 16h18"></path>
+                                </svg>
+                            </div>
                             <div>
                                 <h3>Auto Insurance</h3>
                                 <p class="policy-number">Policy #AUTO-2024-002</p>
@@ -165,7 +210,12 @@
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
-                            <div class="policy-icon">🏠</div>
+                            <div class="icon-wrap accent">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 10l9-7 9 7"></path>
+                                    <path d="M5 10v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10"></path>
+                                </svg>
+                            </div>
                             <div>
                                 <h3>Home Insurance</h3>
                                 <p class="policy-number">Policy #HOME-2024-003</p>
@@ -203,7 +253,13 @@
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
-                            <div class="policy-icon">💼</div>
+                            <div class="icon-wrap">
+                                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                                    <rect x="3" y="7" width="18" height="13" rx="2"></rect>
+                                    <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <path d="M3 12h18"></path>
+                                </svg>
+                            </div>
                             <div>
                                 <h3>Life Insurance</h3>
                                 <p class="policy-number">Policy #LIFE-2023-004</p>
@@ -241,6 +297,49 @@
         </div>
     </section>
 
+    <section class="dashboard-content">
+        <div class="container">
+            <div class="section-title">
+                <h2>Account Settings</h2>
+                <a href="account-settings.html" class="btn btn-secondary">Manage Settings</a>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <div class="icon-wrap">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="7" r="4"></circle>
+                            <path d="M5.5 21a8.5 8.5 0 0 1 13 0"></path>
+                        </svg>
+                    </div>
+                    <h3>Profile Details</h3>
+                    <p>Update your personal information, communication preferences, and emergency contacts.</p>
+                    <a href="account-settings.html" class="link-primary">Edit profile</a>
+                </div>
+                <div class="dashboard-card">
+                    <div class="icon-wrap secondary">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 1l3 5 5 1-3.5 4 1 6-5.5-3-5.5 3 1-6L4 7l5-1 3-5z"></path>
+                        </svg>
+                    </div>
+                    <h3>Security & Login</h3>
+                    <p>Manage password strength, MFA options, and active sessions across devices.</p>
+                    <a href="account-settings.html" class="link-primary">Review security</a>
+                </div>
+                <div class="dashboard-card">
+                    <div class="icon-wrap accent">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                            <path d="M7 8h10M7 12h6"></path>
+                        </svg>
+                    </div>
+                    <h3>Billing & Documents</h3>
+                    <p>Download policy documents, update payment methods, and view invoices.</p>
+                    <a href="account-settings.html" class="link-primary">Manage billing</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -258,8 +357,8 @@
                     </div>
                     <div class="footer-column">
                         <h4>Account</h4>
-                        <a href="login.html">Login</a>
-                        <a href="signup.html">Sign Up</a>
+                        <a href="account-settings.html">Account Settings</a>
+                        <a href="../pages/login.html">Login</a>
                     </div>
                     <div class="footer-column">
                         <h4>Support</h4>
@@ -269,7 +368,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Zivumo Insurance. All rights reserved.</p>
+                <p>&copy; 2026 Zivumo Insurance. All rights reserved.</p>
             </div>
         </div>
     </footer>

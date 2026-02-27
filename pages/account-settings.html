@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Settings - Zivumo Insurance</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <img src="../assets/images/logo.png" alt="Zivumo Insurance Logo" class="logo-image">
+                        <div class="logo-text">
+                            <h1>Zivumo</h1>
+                            <span class="logo-subtitle">Insurance</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="account-settings.html" class="nav-link active">Account Settings</a>
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="settings-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Account Settings</h2>
+                <p class="form-hint">Keep your profile, security, and preferences aligned with your coverage needs.</p>
+            </div>
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3>Profile Details</h3>
+                    <form class="auth-form" id="settingsForm">
+                        <div class="form-group">
+                            <label for="settingsName">Full Name</label>
+                            <input type="text" id="settingsName" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsEmail">Email Address</label>
+                            <input type="email" id="settingsEmail" value="john.doe@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsPhone">Phone Number</label>
+                            <input type="tel" id="settingsPhone" value="(555) 201-8890">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsAddress">Mailing Address</label>
+                            <textarea id="settingsAddress" rows="3">245 North Harbor Way, Suite 300, San Diego, CA 92101</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+                    </form>
+                </div>
+                <div class="settings-card">
+                    <h3>Security & Access</h3>
+                    <div class="settings-list">
+                        <div class="settings-item">
+                            <div class="settings-meta">
+                                <strong>Password</strong>
+                                <p>Last updated 14 days ago</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">Change</button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-meta">
+                                <strong>Multi-factor Auth</strong>
+                                <p>Authenticator app enabled</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">Manage</button>
+                        </div>
+                        <div class="settings-item">
+                            <div class="settings-meta">
+                                <strong>Active Sessions</strong>
+                                <p>2 devices currently signed in</p>
+                            </div>
+                            <button class="btn btn-secondary btn-sm">Review</button>
+                        </div>
+                    </div>
+                    <h3>Notifications</h3>
+                    <div class="settings-list">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="notifyRenewals" checked>
+                            <span>Renewal reminders and policy updates</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="notifyClaims" checked>
+                            <span>Claims status alerts</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="notifyAnnouncements">
+                            <span>Product announcements</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="settingsPreferences">Update Preferences</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dashboard-content">
+        <div class="container">
+            <div class="section-title">
+                <h2>Billing & Documents</h2>
+                <button class="btn btn-secondary">Download All</button>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Payment Method</h3>
+                    <p>Primary card ending in 2048 · Auto-pay enabled</p>
+                    <button class="btn btn-primary btn-sm">Update Card</button>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Policy Documents</h3>
+                    <p>Latest policy pack generated on Feb 12, 2026</p>
+                    <button class="btn btn-secondary btn-sm">View Documents</button>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Invoice History</h3>
+                    <p>Last payment received on Feb 1, 2026</p>
+                    <button class="btn btn-secondary btn-sm">View Invoices</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Zivumo Insurance</h3>
+                    <p>Trust, Security, Protection</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Product</h4>
+                        <a href="../index.html#features">Features</a>
+                        <a href="../index.html#about">About</a>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Account</h4>
+                        <a href="account-settings.html">Account Settings</a>
+                        <a href="login.html">Login</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Zivumo Insurance. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>
