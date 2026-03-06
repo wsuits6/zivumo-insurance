@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@email.com",
+    "phone": "(555) 201-8890",
+    "address": "245 North Harbor Way, Suite 300, San Diego, CA 92101",
+    "preferences": {
+      "renewals": true,
+      "claims": true,
+      "announcements": false
+    }
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "question": "How quickly can I start coverage?",
+    "answer": "Most policies can be activated the same day. Your advisor will confirm any mandatory waiting periods."
+  },
+  {
+    "id": 2,
+    "question": "Can I bundle policies?",
+    "answer": "Yes. Bundles reduce your premium and keep renewals aligned across products."
+  },
+  {
+    "id": 3,
+    "question": "What happens during a claim?",
+    "answer": "You'll receive step-by-step updates, document requests, and resolution timelines inside your dashboard."
+  }
+]

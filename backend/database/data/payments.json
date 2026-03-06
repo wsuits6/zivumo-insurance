@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "label": "Auto Insurance",
+    "amount": "$129",
+    "due_date": "Mar 20, 2026"
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "label": "Home Insurance",
+    "amount": "$98",
+    "due_date": "Apr 02, 2026"
+  },
+  {
+    "id": 3,
+    "user_id": 1,
+    "label": "Health Insurance",
+    "amount": "$184",
+    "due_date": "Apr 15, 2026"
+  }
+]

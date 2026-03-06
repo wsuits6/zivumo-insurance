@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "role": "Retail Owner",
+    "quote": "The dashboard removes all the stress. I can see every policy, invoice, and renewal in one place.",
+    "author": "Aaliyah M."
+  },
+  {
+    "id": 2,
+    "role": "Healthcare Professional",
+    "quote": "Claims moved fast and the updates were clear. I never wondered where things stood.",
+    "author": "Daniel R."
+  },
+  {
+    "id": 3,
+    "role": "Startup Founder",
+    "quote": "Zivumo gives me the confidence to scale. The support team is always a step ahead.",
+    "author": "Priya S."
+  }
+]

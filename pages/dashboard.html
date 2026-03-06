@@ -26,8 +26,10 @@
                 </div>
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-link active">Dashboard</a>
-                    <a href="#" class="nav-link">My Policies</a>
+                    <a href="#policies" class="nav-link">My Policies</a>
+                    <a href="#claims" class="nav-link">Claims</a>
                     <a href="account-settings.html" class="nav-link">Account Settings</a>
+                    <a href="../index.html#support" class="nav-link">Support</a>
                     <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
                 </div>
                 <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
@@ -52,6 +54,7 @@
     <section class="dashboard-header">
         <div class="container">
             <div class="dashboard-welcome">
+                <span class="section-kicker">Overview</span>
                 <h1>Welcome back, <span id="userName">John Doe</span></h1>
                 <p>Manage your policies, renewals, and coverage insights in one place.</p>
             </div>
@@ -108,18 +111,51 @@
         </div>
     </section>
 
+    <!-- Quick Actions -->
+    <section class="dashboard-content" id="quick-actions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Quick Actions</h2>
+                <a href="account-settings.html" class="btn btn-secondary">Manage Settings</a>
+            </div>
+            <div class="action-grid">
+                <div class="action-card" data-action="new-claim">
+                    <span class="tag">Claims</span>
+                    <h3>File a New Claim</h3>
+                    <p>Start a new claim in minutes and track updates instantly.</p>
+                    <button class="btn btn-primary btn-sm">Start Claim</button>
+                </div>
+                <div class="action-card" data-action="add-policy">
+                    <span class="tag">Policies</span>
+                    <h3>Add New Policy</h3>
+                    <p>Bundle coverage or add new protection in one step.</p>
+                    <button class="btn btn-secondary btn-sm">Add Policy</button>
+                </div>
+                <div class="action-card" data-action="payment">
+                    <span class="tag">Billing</span>
+                    <h3>Pay Upcoming Invoice</h3>
+                    <p>Keep autopay on track and view your billing schedule.</p>
+                    <button class="btn btn-secondary btn-sm">Pay Now</button>
+                </div>
+                <div class="action-card" data-action="documents">
+                    <span class="tag">Documents</span>
+                    <h3>Download Policy Pack</h3>
+                    <p>Grab your latest documents and share securely.</p>
+                    <button class="btn btn-secondary btn-sm">Download</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Policies Section -->
-    <section class="dashboard-content">
+    <section class="dashboard-content" id="policies">
         <div class="container">
             <div class="section-title">
                 <h2>Your Policies</h2>
-                <button class="btn btn-primary">Add New Policy</button>
+                <button class="btn btn-primary" id="addPolicyBtn">Add New Policy</button>
             </div>
 
-            <!-- Policy Cards Grid -->
             <div class="policies-grid" id="policiesGrid">
-
-                <!-- Health Insurance Policy -->
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
@@ -156,12 +192,11 @@
                         </div>
                     </div>
                     <div class="policy-footer">
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                        <button class="btn btn-secondary btn-sm" data-policy-action="details">View Details</button>
+                        <button class="btn btn-primary btn-sm" data-policy-action="renew">Renew Policy</button>
                     </div>
                 </div>
 
-                <!-- Auto Insurance Policy -->
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
@@ -201,12 +236,11 @@
                         </div>
                     </div>
                     <div class="policy-footer">
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                        <button class="btn btn-secondary btn-sm" data-policy-action="details">View Details</button>
+                        <button class="btn btn-primary btn-sm" data-policy-action="renew">Renew Policy</button>
                     </div>
                 </div>
 
-                <!-- Home Insurance Policy -->
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
@@ -244,12 +278,11 @@
                         </div>
                     </div>
                     <div class="policy-footer">
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                        <button class="btn btn-primary btn-sm">Renew Policy</button>
+                        <button class="btn btn-secondary btn-sm" data-policy-action="details">View Details</button>
+                        <button class="btn btn-primary btn-sm" data-policy-action="renew">Renew Policy</button>
                     </div>
                 </div>
 
-                <!-- Life Insurance Policy - Expiring Soon -->
                 <div class="policy-card">
                     <div class="policy-header">
                         <div class="policy-type">
@@ -288,11 +321,97 @@
                         </div>
                     </div>
                     <div class="policy-footer">
-                        <button class="btn btn-secondary btn-sm">View Details</button>
-                        <button class="btn btn-alert btn-sm">Renew Now</button>
+                        <button class="btn btn-secondary btn-sm" data-policy-action="details">View Details</button>
+                        <button class="btn btn-alert btn-sm" data-policy-action="renew">Renew Now</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
+    <section class="dashboard-content" id="claims">
+        <div class="container">
+            <div class="section-title">
+                <h2>Claims Snapshot</h2>
+                <a href="../index.html#claims" class="btn btn-secondary">Learn About Claims</a>
+            </div>
+            <div class="dashboard-grid">
+                <div class="list-card">
+                    <h3>Recent Claims</h3>
+                    <div id="claimsList">
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Auto Collision</strong>
+                                <span class="section-subtitle">Claim #CLM-4421 · Filed Feb 12, 2026</span>
+                            </div>
+                            <span class="status-pill pending">In Review</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Home Water Damage</strong>
+                                <span class="section-subtitle">Claim #CLM-4388 · Filed Jan 05, 2026</span>
+                            </div>
+                            <span class="status-pill success">Approved</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-card">
+                    <h3>Payment Schedule</h3>
+                    <div id="paymentsList">
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Auto Insurance</strong>
+                                <span class="section-subtitle">Due Mar 20, 2026</span>
+                            </div>
+                            <span class="status-pill info">$129</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Home Insurance</strong>
+                                <span class="section-subtitle">Due Apr 02, 2026</span>
+                            </div>
+                            <span class="status-pill info">$98</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-card">
+                    <h3>Documents</h3>
+                    <div id="documentsList">
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Policy Pack 2026</strong>
+                                <span class="section-subtitle">PDF · Updated Feb 12, 2026</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" data-action="download">Download</button>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Claims Guide</strong>
+                                <span class="section-subtitle">PDF · Updated Jan 18, 2026</span>
+                            </div>
+                            <button class="btn btn-secondary btn-sm" data-action="download">Download</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-card">
+                    <h3>Notifications</h3>
+                    <div id="notificationsList">
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Renewal reminder</strong>
+                                <span class="section-subtitle">Life policy renewal in 28 days</span>
+                            </div>
+                            <span class="status-pill pending">Action</span>
+                        </div>
+                        <div class="list-item">
+                            <div class="list-meta">
+                                <strong>Payment received</strong>
+                                <span class="section-subtitle">Auto policy payment posted</span>
+                            </div>
+                            <span class="status-pill success">Done</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -352,18 +471,15 @@
                     <div class="footer-column">
                         <h4>Product</h4>
                         <a href="../index.html#features">Features</a>
-                        <a href="../index.html#about">About</a>
+                        <a href="../index.html#plans">Plans</a>
+                        <a href="../index.html#claims">Claims</a>
                         <a href="dashboard.html">Dashboard</a>
                     </div>
                     <div class="footer-column">
                         <h4>Account</h4>
                         <a href="account-settings.html">Account Settings</a>
                         <a href="../pages/login.html">Login</a>
-                    </div>
-                    <div class="footer-column">
-                        <h4>Support</h4>
-                        <a href="#">Help Center</a>
-                        <a href="#">Contact Us</a>
+                        <a href="../index.html#support">Support</a>
                     </div>
                 </div>
             </div>

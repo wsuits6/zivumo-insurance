@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "title": "Auto Collision",
+    "reference": "CLM-4421",
+    "status": "In Review",
+    "filed_at": "Feb 12, 2026"
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "title": "Home Water Damage",
+    "reference": "CLM-4388",
+    "status": "Approved",
+    "filed_at": "Jan 05, 2026"
+  },
+  {
+    "id": 3,
+    "user_id": 1,
+    "title": "Health Reimbursement",
+    "reference": "CLM-4310",
+    "status": "Pending",
+    "filed_at": "Dec 22, 2025"
+  }
+]

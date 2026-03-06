@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "title": "Policy Pack 2026",
+    "type": "PDF",
+    "updated_at": "Feb 12, 2026"
+  },
+  {
+    "id": 2,
+    "user_id": 1,
+    "title": "Claims Guide",
+    "type": "PDF",
+    "updated_at": "Jan 18, 2026"
+  },
+  {
+    "id": 3,
+    "user_id": 1,
+    "title": "Auto Coverage Summary",
+    "type": "PDF",
+    "updated_at": "Dec 02, 2025"
+  }
+]

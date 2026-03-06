@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "Essential Coverage",
+    "price": "$79/month",
+    "tag": "Starter",
+    "features": [
+      "Property + Auto policy bundle",
+      "24/7 claims hotline",
+      "Annual coverage review"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Signature Coverage",
+    "price": "$129/month",
+    "tag": "Most Popular",
+    "features": [
+      "Health + Life + Auto",
+      "Dedicated advisor",
+      "Priority claims handling"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Executive Coverage",
+    "price": "$219/month",
+    "tag": "Premium",
+    "features": [
+      "Global medical + travel",
+      "Elite concierge support",
+      "Risk concierge insights"
+    ]
+  }
+]
