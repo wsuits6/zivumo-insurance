@@ -1,0 +1,75 @@
+/* ===================================
+   ZIVUMO INSURANCE - ADMIN
+   =================================== */
+
+/* Admin navbar */
+.admin-navbar {
+    background: linear-gradient(120deg, #1f3a93, #162a70);
+    border-bottom: none;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-navbar .logo h1,
+.admin-navbar .logo-subtitle,
+.admin-navbar .nav-link {
+    color: #ffffff;
+}
+
+.admin-navbar .nav-link:hover,
+.admin-navbar .nav-link.active {
+    color: #ffffff;
+    opacity: 0.85;
+}
+
+.admin-navbar .theme-toggle,
+.admin-navbar .nav-toggle {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+.admin-navbar .theme-toggle:hover,
+.admin-navbar .nav-toggle:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
+/* Admin tables */
+.admin-section {
+    margin-top: var(--spacing-xl);
+}
+
+.admin-table-wrap {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.admin-table th {
+    font-weight: 700;
+    color: var(--text-secondary);
+    background: var(--bg-tertiary);
+}
+
+.admin-status-select {
+    padding: 0.4rem 0.6rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    margin-right: 0.5rem;
+}

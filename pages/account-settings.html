@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Settings - Zivumo Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages/app.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -26,6 +30,7 @@
                 </div>
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="policies.html" class="nav-link">My Policies</a>
                     <a href="account-settings.html" class="nav-link active">Account Settings</a>
                     <a href="../index.html" class="nav-link">Home</a>
                     <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
@@ -60,19 +65,19 @@
                     <form class="auth-form" id="settingsForm">
                         <div class="form-group">
                             <label for="settingsName">Full Name</label>
-                            <input type="text" id="settingsName" value="John Doe">
+                            <input type="text" id="settingsName" placeholder="Full name">
                         </div>
                         <div class="form-group">
                             <label for="settingsEmail">Email Address</label>
-                            <input type="email" id="settingsEmail" value="john.doe@email.com">
+                            <input type="email" id="settingsEmail" placeholder="Email address">
                         </div>
                         <div class="form-group">
                             <label for="settingsPhone">Phone Number</label>
-                            <input type="tel" id="settingsPhone" value="(555) 201-8890">
+                            <input type="tel" id="settingsPhone" placeholder="Phone number">
                         </div>
                         <div class="form-group">
                             <label for="settingsAddress">Mailing Address</label>
-                            <textarea id="settingsAddress" rows="3">245 North Harbor Way, Suite 300, San Diego, CA 92101</textarea>
+                            <textarea id="settingsAddress" rows="3" placeholder="Mailing address"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Profile Changes</button>
                     </form>
@@ -83,33 +88,33 @@
                         <div class="settings-item">
                             <div class="settings-meta">
                                 <strong>Password</strong>
-                                <p>Last updated 14 days ago</p>
+                                <p>Update your password and keep access secure.</p>
                             </div>
-                            <button class="btn btn-secondary btn-sm">Change</button>
+                            <a class="btn btn-secondary btn-sm" href="password-update.html">Change</a>
                         </div>
                         <div class="settings-item">
                             <div class="settings-meta">
                                 <strong>Multi-factor Auth</strong>
-                                <p>Authenticator app enabled</p>
+                                <p>Configure MFA options for stronger protection.</p>
                             </div>
-                            <button class="btn btn-secondary btn-sm">Manage</button>
+                            <a class="btn btn-secondary btn-sm" href="mfa-settings.html">Manage</a>
                         </div>
                         <div class="settings-item">
                             <div class="settings-meta">
                                 <strong>Active Sessions</strong>
-                                <p>2 devices currently signed in</p>
+                                <p>Review where your account is signed in.</p>
                             </div>
-                            <button class="btn btn-secondary btn-sm">Review</button>
+                            <a class="btn btn-secondary btn-sm" href="sessions.html">Review</a>
                         </div>
                     </div>
                     <h3>Notifications</h3>
                     <div class="settings-list">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="notifyRenewals" checked>
+                            <input type="checkbox" id="notifyRenewals">
                             <span>Renewal reminders and policy updates</span>
                         </label>
                         <label class="checkbox-label">
-                            <input type="checkbox" id="notifyClaims" checked>
+                            <input type="checkbox" id="notifyClaims">
                             <span>Claims status alerts</span>
                         </label>
                         <label class="checkbox-label">
@@ -127,23 +132,23 @@
         <div class="container">
             <div class="section-title">
                 <h2>Billing & Documents</h2>
-                <button class="btn btn-secondary">Download All</button>
+                <a class="btn btn-secondary" href="documents.html">Download All</a>
             </div>
             <div class="dashboard-grid">
                 <div class="dashboard-card">
                     <h3>Payment Method</h3>
-                    <p>Primary card ending in 2048 · Auto-pay enabled</p>
-                    <button class="btn btn-primary btn-sm">Update Card</button>
+                    <p id="paymentSummary">Loading payment method...</p>
+                    <a class="btn btn-primary btn-sm" href="payment-methods.html">Update Card</a>
                 </div>
                 <div class="dashboard-card">
                     <h3>Policy Documents</h3>
-                    <p>Latest policy pack generated on Feb 12, 2026</p>
-                    <button class="btn btn-secondary btn-sm">View Documents</button>
+                    <p id="documentsSummary">Loading documents...</p>
+                    <a class="btn btn-secondary btn-sm" href="documents.html">View Documents</a>
                 </div>
                 <div class="dashboard-card">
                     <h3>Invoice History</h3>
-                    <p>Last payment received on Feb 1, 2026</p>
-                    <button class="btn btn-secondary btn-sm">View Invoices</button>
+                    <p id="invoicesSummary">Loading invoices...</p>
+                    <a class="btn btn-secondary btn-sm" href="invoices.html">View Invoices</a>
                 </div>
             </div>
         </div>
@@ -171,8 +176,8 @@
                     </div>
                     <div class="footer-column">
                         <h4>Support</h4>
-                        <a href="#">Help Center</a>
-                        <a href="#">Contact Us</a>
+                        <a href="help-center.html">Help Center</a>
+                        <a href="contact-us.html">Contact Us</a>
                     </div>
                 </div>
             </div>
@@ -182,6 +187,19 @@
         </div>
     </footer>
 
-    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/core/api.js"></script>
+    <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/theme.js"></script>
+    <script src="../assets/js/core/smooth-scroll.js"></script>
+    <script src="../assets/js/core/nav.js"></script>
+    <script src="../assets/js/core/animations.js"></script>
+    <script src="../assets/js/pages/auth.js"></script>
+    <script src="../assets/js/pages/app-auth.js"></script>
+    <script src="../assets/js/pages/dashboard.js"></script>
+    <script src="../assets/js/pages/policies.js"></script>
+    <script src="../assets/js/pages/data.js"></script>
+    <script src="../assets/js/pages/account-settings.js"></script>
+    <script src="../assets/js/pages/admin.js"></script>
+    <script src="../assets/js/bootstrap.js"></script>
 </body>
 </html>

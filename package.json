@@ -1,0 +1,17 @@
+{
+  "name": "zivumo-insurance",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zivumo Insurance web app (Express + static frontend)",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "express-session": "^1.18.0",
+    "helmet": "^7.1.0"
+  }
+}

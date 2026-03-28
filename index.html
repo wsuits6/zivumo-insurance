@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zivumo Insurance - Trust, Security, Protection</title>
     <link rel="icon" type="image/png" href="assets/images/logo.png">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/pages/landing.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -74,28 +78,8 @@
                     </div>
                 </div>
                 <div class="hero-visual">
-                    <div class="hero-logo">
+                    <div class="hero-logo-card">
                         <img src="assets/images/logo.png" alt="Zivumo Insurance logo">
-                    </div>
-                    <div class="hero-card">
-                        <div class="icon-wrap">
-                            <svg class="icon icon-xl" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M12 3l7 4v5c0 5-3 9-7 11-4-2-7-6-7-11V7l7-4z"></path>
-                            </svg>
-                        </div>
-                        <h3>Your Protection Dashboard</h3>
-                        <p>Track every policy, renewal date, and claim in one secure workspace.</p>
-                        <div class="hero-panel">
-                            <div class="panel-row">
-                                Active Coverage <span>$2.4M total</span>
-                            </div>
-                            <div class="panel-row">
-                                Next Renewal <span>May 12, 2026</span>
-                            </div>
-                            <div class="panel-row">
-                                Risk Review <span>Low exposure</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -244,8 +228,8 @@
                     </div>
                     <div class="footer-column">
                         <h4>Support</h4>
-                        <a href="#">Help Center</a>
-                        <a href="#">Contact Us</a>
+                        <a href="pages/help-center.html">Help Center</a>
+                        <a href="pages/contact-us.html">Contact Us</a>
                     </div>
                 </div>
             </div>
@@ -255,6 +239,19 @@
         </div>
     </footer>
 
-    <script src="assets/js/main.js"></script>
+    <script src="assets/js/core/api.js"></script>
+    <script src="assets/js/core/utils.js"></script>
+    <script src="assets/js/core/theme.js"></script>
+    <script src="assets/js/core/smooth-scroll.js"></script>
+    <script src="assets/js/core/nav.js"></script>
+    <script src="assets/js/core/animations.js"></script>
+    <script src="assets/js/pages/auth.js"></script>
+    <script src="assets/js/pages/app-auth.js"></script>
+    <script src="assets/js/pages/dashboard.js"></script>
+    <script src="assets/js/pages/policies.js"></script>
+    <script src="assets/js/pages/data.js"></script>
+    <script src="assets/js/pages/account-settings.js"></script>
+    <script src="assets/js/pages/admin.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
 </body>
 </html>

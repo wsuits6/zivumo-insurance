@@ -1,0 +1,102 @@
+/* ===================================
+   ZIVUMO INSURANCE - AUTH PAGES
+   =================================== */
+
+.auth-section {
+    padding: var(--spacing-xl) 0;
+    min-height: calc(100vh - 200px);
+    background: var(--bg-tertiary);
+}
+
+.auth-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xl);
+    align-items: start;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.auth-card {
+    background: var(--bg-secondary);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-header h1 {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.auth-header p {
+    color: var(--text-secondary);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.auth-visual {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.visual-card {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    display: grid;
+    gap: var(--spacing-md);
+    text-align: left;
+}
+
+.visual-card h3 {
+    font-size: 1.5rem;
+}
+
+.visual-card p {
+    color: var(--text-secondary);
+}
+
+.visual-features {
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.visual-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.feature-bullet {
+    background: rgba(11, 110, 110, 0.15);
+    color: var(--primary-color);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}

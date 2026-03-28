@@ -1,0 +1,162 @@
+/* ===================================
+   ZIVUMO INSURANCE - BASE STYLES
+   =================================== */
+
+/* === CSS VARIABLES === */
+:root {
+    /* Typography */
+    --font-heading: "Space Grotesk", "Segoe UI", sans-serif;
+    --font-body: "Manrope", "Segoe UI", sans-serif;
+
+    /* Light Theme - Primary Colors */
+    --primary-color: #0B6E6E;
+    --secondary-color: #D18B2C;
+    --accent-color: #1F3A93;
+
+    /* Light Theme - Neutral Colors */
+    --bg-primary: #F9F7F2;
+    --bg-secondary: #FFFFFF;
+    --bg-tertiary: #F0F3F7;
+    --text-primary: #0B1B1F;
+    --text-secondary: #4B5B66;
+    --border-color: #E2E6EA;
+
+    /* Functional Colors */
+    --success-color: #1C8B6A;
+    --warning-color: #D18B2C;
+    --error-color: #D1494E;
+
+    /* Shadows */
+    --shadow-sm: 0 6px 14px rgba(11, 27, 31, 0.08);
+    --shadow-md: 0 14px 28px rgba(11, 27, 31, 0.12);
+    --shadow-lg: 0 22px 40px rgba(11, 27, 31, 0.18);
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-pill: 999px;
+
+    /* Transitions */
+    --transition: all 0.3s ease;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --primary-color: #59D4C0;
+    --secondary-color: #F2B35D;
+    --accent-color: #9DB8FF;
+
+    --bg-primary: #0D1116;
+    --bg-secondary: #141A21;
+    --bg-tertiary: #1D2430;
+    --text-primary: #F5F7FA;
+    --text-secondary: #B3C0CB;
+    --border-color: #26313B;
+
+    --success-color: #59D4C0;
+    --warning-color: #F2B35D;
+}
+
+/* === RESET & BASE === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background: radial-gradient(circle at top, rgba(89, 212, 192, 0.15), transparent 55%),
+        radial-gradient(circle at 10% 20%, rgba(209, 139, 44, 0.14), transparent 40%),
+        var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    transition: var(--transition);
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: var(--transition);
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* === CONTAINER === */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* === ICONS === */
+.icon {
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.icon-sm {
+    width: 20px;
+    height: 20px;
+}
+
+.icon-lg {
+    width: 38px;
+    height: 38px;
+}
+
+.icon-xl {
+    width: 52px;
+    height: 52px;
+}
+
+.icon-fill {
+    fill: currentColor;
+    stroke: none;
+}
+
+.icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 110, 110, 0.12);
+    color: var(--primary-color);
+}
+
+.icon-wrap.secondary {
+    background: rgba(209, 139, 44, 0.15);
+    color: var(--secondary-color);
+}
+
+.icon-wrap.accent {
+    background: rgba(31, 58, 147, 0.15);
+    color: var(--accent-color);
+}

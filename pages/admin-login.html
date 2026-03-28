@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Zivumo Insurance</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages/auth.css">
+    <link rel="stylesheet" href="../assets/css/pages/admin.css">
+    <link rel="stylesheet" href="../assets/css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar admin-navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <a href="../index.html">
+                        <img src="../assets/images/logo.png" alt="Zivumo Insurance Logo" class="logo-image">
+                        <div class="logo-text">
+                            <h1>Zivumo Admin</h1>
+                            <span class="logo-subtitle">Control Center</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="nav-links">
+                    <a href="../index.html" class="nav-link">Home</a>
+                    <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+                </div>
+                <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1>Admin Access</h1>
+                    <p>Enter the admin password from your environment seed.</p>
+                </div>
+                <form class="auth-form" id="adminLoginForm">
+                    <div class="form-message">Use the admin password configured in `ADMIN_PASSWORD_SEED`.</div>
+                    <div class="form-group">
+                        <label for="adminPassword">Admin Password</label>
+                        <input type="password" id="adminPassword" name="password" placeholder="Admin password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+            </div>
+            <div class="auth-visual">
+                <div class="visual-card">
+                    <h3>Admin Overview</h3>
+                    <p>Monitor users, policies, and platform health from a single dashboard.</p>
+                </div>
+                <div class="visual-card">
+                    <h3>Secure Access</h3>
+                    <p>Admin access is protected by an environment-seeded password.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../assets/js/core/api.js"></script>
+    <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/theme.js"></script>
+    <script src="../assets/js/core/smooth-scroll.js"></script>
+    <script src="../assets/js/core/nav.js"></script>
+    <script src="../assets/js/core/animations.js"></script>
+    <script src="../assets/js/pages/auth.js"></script>
+    <script src="../assets/js/pages/app-auth.js"></script>
+    <script src="../assets/js/pages/dashboard.js"></script>
+    <script src="../assets/js/pages/policies.js"></script>
+    <script src="../assets/js/pages/data.js"></script>
+    <script src="../assets/js/pages/account-settings.js"></script>
+    <script src="../assets/js/pages/admin.js"></script>
+    <script src="../assets/js/bootstrap.js"></script>
+</body>
+</html>
