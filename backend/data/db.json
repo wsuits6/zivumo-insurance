@@ -1,19 +1,6 @@
 {
   "users": [
     {
-      "id": 1,
-      "name": "Amina Mensah",
-      "email": "demo@zivumo.com",
-      "passwordHash": "$2a$10$NGnPZx9/rsMGu/pMVAUfxOfSPkp0VP68TD6si5WwdndtWwzFCvT0e",
-      "phone": "+233 24 555 0134",
-      "address": "14 Osu Oxford St, Accra",
-      "preferences": {
-        "renewals": true,
-        "claims": true,
-        "announcements": false
-      }
-    },
-    {
       "id": 2,
       "name": "RAHAMAN PELIGAH",
       "email": "peligahrahaman123@gmail.com",
@@ -29,54 +16,6 @@
   ],
   "policies": [
     {
-      "id": 101,
-      "userId": 1,
-      "type": "Health Insurance",
-      "policyNumber": "HLT-2026-001",
-      "status": "active",
-      "coverage": "Comprehensive Family Plan",
-      "startDate": "2026-01-10",
-      "endDate": "2027-01-09",
-      "premium": 210.5,
-      "currency": "USD"
-    },
-    {
-      "id": 102,
-      "userId": 1,
-      "type": "Auto Insurance",
-      "policyNumber": "AUTO-2026-004",
-      "status": "active",
-      "coverage": "Full Coverage - Toyota Camry",
-      "startDate": "2026-02-15",
-      "endDate": "2027-02-14",
-      "premium": 95.25,
-      "currency": "USD"
-    },
-    {
-      "id": 103,
-      "userId": 1,
-      "type": "Home Insurance",
-      "policyNumber": "HOME-2025-219",
-      "status": "active",
-      "coverage": "Property & Contents",
-      "startDate": "2025-12-01",
-      "endDate": "2026-11-30",
-      "premium": 150,
-      "currency": "USD"
-    },
-    {
-      "id": 104,
-      "userId": 1,
-      "type": "Travel Insurance",
-      "policyNumber": "TRV-2025-087",
-      "status": "pending_renewal",
-      "coverage": "Global Essential",
-      "startDate": "2025-06-20",
-      "endDate": "2026-04-05",
-      "premium": 48.75,
-      "currency": "USD"
-    },
-    {
       "id": 105,
       "userId": 2,
       "type": "Rental House Test",
@@ -89,71 +28,8 @@
       "currency": "USD"
     }
   ],
-  "notifications": [
-    {
-      "id": 201,
-      "userId": 1,
-      "type": "renewal",
-      "message": "Travel Insurance policy TRV-2025-087 expires on 2026-04-05.",
-      "date": "2026-03-22",
-      "read": false
-    },
-    {
-      "id": 202,
-      "userId": 1,
-      "type": "announcement",
-      "message": "We've added instant claim tracking for auto policies.",
-      "date": "2026-03-10",
-      "read": true
-    }
-  ],
-  "documents": [
-    {
-      "id": 301,
-      "userId": 1,
-      "policyId": 101,
-      "title": "Health Policy Schedule",
-      "type": "text",
-      "date": "2026-01-10",
-      "file": "/assets/docs/health-policy-schedule.txt"
-    },
-    {
-      "id": 302,
-      "userId": 1,
-      "policyId": 102,
-      "title": "Auto Insurance Certificate",
-      "type": "text",
-      "date": "2026-02-15",
-      "file": "/assets/docs/auto-insurance-certificate.txt"
-    }
-  ],
-  "invoices": [
-    {
-      "id": 401,
-      "userId": 1,
-      "policyId": 103,
-      "amount": 150,
-      "currency": "USD",
-      "date": "2026-02-01",
-      "status": "paid"
-    },
-    {
-      "id": 402,
-      "userId": 1,
-      "policyId": 104,
-      "amount": 48.75,
-      "currency": "USD",
-      "date": "2026-03-20",
-      "status": "due"
-    }
-  ],
-  "paymentMethods": [
-    {
-      "id": 501,
-      "userId": 1,
-      "brand": "Visa",
-      "last4": "4281",
-      "expiry": "09/27"
-    }
-  ]
+  "notifications": [],
+  "documents": [],
+  "invoices": [],
+  "paymentMethods": []
 }

@@ -11,6 +11,8 @@ class AppAuth {
     }
 
     async checkAuth() {
+        const isAdminPage = window.location.pathname.includes('admin-');
+        if (isAdminPage) return;
         const response = await apiRequest('/api/me', 'GET');
         if (!response.ok) {
             if (window.location.pathname.includes('dashboard.html') ||
@@ -68,6 +70,7 @@ class AppAuth {
 }
 
 function initAppAuth() {
+    if (window.location.pathname.includes('admin-')) return;
     const protectedPages = [
         'dashboard.html',
         'account-settings.html',

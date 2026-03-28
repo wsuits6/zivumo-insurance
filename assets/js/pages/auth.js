@@ -8,28 +8,6 @@ class FormValidator {
 
     init() {
         this.form.addEventListener('submit', (e) => this.handleSubmit(e));
-        this.setupDemoLogin();
-    }
-
-    setupDemoLogin() {
-        if (this.form.id !== 'loginForm') return;
-
-        const demoLoginBtn = document.getElementById('demoLoginBtn');
-        if (!demoLoginBtn) return;
-
-        demoLoginBtn.addEventListener('click', () => {
-            const emailInput = this.form.querySelector('#email');
-            const passwordInput = this.form.querySelector('#password');
-            if (emailInput) emailInput.value = 'demo@zivumo.com';
-            if (passwordInput) passwordInput.value = 'Zivumo123!';
-            this.showMessage('Signing you in with demo account...', 'success');
-            setTimeout(() => {
-                this.handleLogin({
-                    email: 'demo@zivumo.com',
-                    password: 'Zivumo123!'
-                });
-            }, 400);
-        });
     }
 
     handleSubmit(e) {
