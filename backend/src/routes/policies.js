@@ -36,7 +36,7 @@ function createPoliciesRouter() {
     const startDate = String(req.body.startDate || '').trim();
     const endDate = String(req.body.endDate || '').trim();
     const premium = Number(req.body.premium || 0);
-    const currency = String(req.body.currency || 'USD').trim().toUpperCase();
+    const currency = String(req.body.currency || 'GHS').trim().toUpperCase();
 
     if (!type || !coverage || !startDate || !endDate || !premium) {
       return res.status(422).json({ ok: false, message: 'Type, coverage, dates, and premium are required' });

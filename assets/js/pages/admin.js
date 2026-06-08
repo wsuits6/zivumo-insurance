@@ -119,3 +119,86 @@ async function loadAdminDashboard() {
 
 window.setupAdminLogin = setupAdminLogin;
 window.loadAdminDashboard = loadAdminDashboard;
+
+/* Modal Management */
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.style.display = 'block';
+        if (id === 'assignPolicyModal') populatePolicyTypes('adminPolicyType');
+    }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.style.display = 'none';
+}
+
+function populatePolicyTypes(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select || select.options.length > 1) return;
+    
+    for (const type in window.POLICY_TYPES) {
+        const option = document.createElement('option');
+        option.value = type;
+        option.textContent = type;
+        select.appendChild(option);
+    }
+
+    select.addEventListener('change', () => {
+        const coverageId = selectId === 'adminPolicyType' ? 'adminPolicyCoverage' : 'policyCoverage';
+        const coverageEl = document.getElementById(coverageId);
+        if (coverageEl) coverageEl.value = window.POLICY_TYPES[select.value] || '';
+    });
+}
+
+function setupAdminActions() {
+    const userForm = document.getElementById('adminCreateUserForm');
+    const policyForm = document.getElementById('adminAssignPolicyForm');
+
+    if (userForm) {
+        userForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('adminUserName').value.trim(),
+                email: document.getElementById('adminUserEmail').value.trim()
+            };
+            const response = await apiRequest('/api/admin/users', 'POST', payload);
+            const msgEl = document.getElementById('adminCreateUserMessage');
+            if (response.ok) {
+                msgEl.textContent = 'User created! Default password: ChangeMe123!';
+                userForm.reset();
+                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 2000);
+            } else {
+                msgEl.textContent = response.message || 'Error creating user.';
+            }
+        });
+    }
+
+    if (policyForm) {
+        policyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                userId: document.getElementById('adminPolicyUserId').value,
+                type: document.getElementById('adminPolicyType').value,
+                coverage: document.getElementById('adminPolicyCoverage').value,
+                startDate: document.getElementById('adminPolicyStart').value,
+                endDate: document.getElementById('adminPolicyEnd').value,
+                premium: document.getElementById('adminPolicyPremium').value
+            };
+            const response = await apiRequest('/api/admin/assign-policy', 'POST', payload);
+            const msgEl = document.getElementById('adminAssignPolicyMessage');
+            if (response.ok) {
+                msgEl.textContent = 'Policy assigned successfully!';
+                policyForm.reset();
+                setTimeout(() => { closeModal('assignPolicyModal'); loadAdminDashboard(); }, 2000);
+            } else {
+                msgEl.textContent = response.message || 'Error assigning policy.';
+            }
+        });
+    }
+}
+
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.setupAdminActions = setupAdminActions;

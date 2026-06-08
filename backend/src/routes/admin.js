@@ -102,6 +102,71 @@ function createAdminRouter({ loginLimiter }) {
     return res.json({ ok: true, data: policy, message: 'Policy status updated' });
   });
 
+  router.post('/users', requireAdmin, async (req, res) => {
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const password = String(req.body.password || 'ChangeMe123!'); // Default password
+
+    if (!name || !email) {
+      return res.status(422).json({ ok: false, message: 'Name and email are required' });
+    }
+
+    const db = await readDb();
+    if (db.users.find((u) => u.email === email)) {
+      return res.status(409).json({ ok: false, message: 'User already exists' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const newUser = {
+      id: getNextId(db.users),
+      name,
+      email,
+      passwordHash,
+      phone: '',
+      address: '',
+      preferences: { renewals: true, claims: true, announcements: false }
+    };
+
+    db.users.push(newUser);
+    await writeDb(db);
+    return res.status(201).json({ ok: true, data: { id: newUser.id, name, email }, message: 'User created successfully' });
+  });
+
+  router.post('/assign-policy', requireAdmin, async (req, res) => {
+    const { userId, type, coverage, startDate, endDate, premium } = req.body;
+
+    if (!userId || !type || !coverage || !startDate || !endDate || !premium) {
+      return res.status(422).json({ ok: false, message: 'Missing required policy fields' });
+    }
+
+    const db = await readDb();
+    const user = db.users.find((u) => u.id === Number(userId));
+    if (!user) {
+      return res.status(404).json({ ok: false, message: 'User not found' });
+    }
+
+    const id = getNextId(db.policies);
+    const year = new Date(startDate).getFullYear();
+    const policyNumber = `${type.replace(/\s+/g, '').slice(0, 4).toUpperCase()}-${year}-${id}`;
+
+    const policy = {
+      id,
+      userId: Number(userId),
+      type,
+      policyNumber,
+      status: 'active',
+      coverage,
+      startDate,
+      endDate,
+      premium: Number(premium),
+      currency: 'GHS'
+    };
+
+    db.policies.push(policy);
+    await writeDb(db);
+    return res.status(201).json({ ok: true, data: policy, message: 'Policy assigned successfully' });
+  });
+
   return router;
 }
 

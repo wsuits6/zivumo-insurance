@@ -12,6 +12,9 @@
 }
 
 @media (max-width: 768px) {
+    body {
+        scroll-snap-type: none;
+    }
     .nav-toggle {
         display: inline-flex;
     }

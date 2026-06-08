@@ -186,7 +186,10 @@
     border-top: 1px solid var(--border-color);
 }
 
-.footer-bottom p {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
+.settings-section,
+.dashboard-header,
+.dashboard-content,
+.admin-section {
+    scroll-snap-align: start;
+    scroll-margin-top: 80px;
 }

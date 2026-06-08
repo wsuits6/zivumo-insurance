@@ -61,11 +61,13 @@
                 <form id="newPolicyForm" class="auth-form">
                     <div class="form-group">
                         <label for="policyType">Policy Type</label>
-                        <input type="text" id="policyType" required>
+                        <select id="policyType" required>
+                            <option value="" disabled selected>Select a policy type</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="policyCoverage">Coverage Details</label>
-                        <input type="text" id="policyCoverage" required>
+                        <textarea id="policyCoverage" required rows="4" placeholder="Select a policy type to auto-fill details..."></textarea>
                     </div>
                     <div class="form-group">
                         <label for="policyStart">Start Date</label>
@@ -76,12 +78,8 @@
                         <input type="date" id="policyEnd" required>
                     </div>
                     <div class="form-group">
-                        <label for="policyPremium">Monthly Premium</label>
+                        <label for="policyPremium">Monthly Premium (GHS)</label>
                         <input type="number" id="policyPremium" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="policyCurrency">Currency</label>
-                        <input type="text" id="policyCurrency" value="USD" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Create Policy</button>
                     <p id="newPolicyMessage" class="form-hint"></p>
@@ -124,6 +122,7 @@
 
     <script src="../assets/js/core/api.js"></script>
     <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/policy-data.js"></script>
     <script src="../assets/js/core/theme.js"></script>
     <script src="../assets/js/core/smooth-scroll.js"></script>
     <script src="../assets/js/core/nav.js"></script>

@@ -52,5 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.includes('admin-dashboard.html') && window.loadAdminDashboard) {
         loadAdminDashboard();
+        if (window.setupAdminActions) setupAdminActions();
     }
 });

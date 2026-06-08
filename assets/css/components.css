@@ -19,15 +19,34 @@
 }
 
 .btn-primary {
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), #0e8a8a);
     color: #FFFFFF;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 12px rgba(11, 110, 110, 0.2);
 }
 
 .btn-primary:hover {
-    opacity: 0.92;
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(11, 110, 110, 0.3);
+    filter: brightness(1.1);
+}
+
+/* Cards */
+.settings-card,
+.dashboard-card,
+.policy-row,
+.data-row {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+
+.settings-card:hover,
+.dashboard-card:hover {
     box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
 }
 
 .btn-secondary {

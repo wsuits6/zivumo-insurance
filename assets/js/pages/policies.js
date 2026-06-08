@@ -74,15 +74,33 @@ function setupPolicyRenew() {
 function setupNewPolicy() {
     const newPolicyForm = document.getElementById('newPolicyForm');
     if (!newPolicyForm) return;
+
+    // Populate types and setup auto-fill
+    const typeSelect = document.getElementById('policyType');
+    const coverageText = document.getElementById('policyCoverage');
+
+    if (typeSelect && window.POLICY_TYPES) {
+        for (const type in window.POLICY_TYPES) {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+        }
+
+        typeSelect.addEventListener('change', () => {
+            coverageText.value = window.POLICY_TYPES[typeSelect.value] || '';
+        });
+    }
+
     newPolicyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const payload = {
-            type: document.getElementById('policyType').value.trim(),
-            coverage: document.getElementById('policyCoverage').value.trim(),
+            type: typeSelect.value,
+            coverage: coverageText.value.trim(),
             startDate: document.getElementById('policyStart').value,
             endDate: document.getElementById('policyEnd').value,
             premium: document.getElementById('policyPremium').value,
-            currency: document.getElementById('policyCurrency').value
+            currency: 'GHS'
         };
         const response = await apiRequest('/api/policies', 'POST', payload);
         const messageEl = document.getElementById('newPolicyMessage');

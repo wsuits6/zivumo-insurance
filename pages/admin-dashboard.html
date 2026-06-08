@@ -105,7 +105,7 @@
                     </div>
                     <div class="stat-info">
                         <h3 id="adminTotalPremium">--</h3>
-                        <p>Total Premium (USD)</p>
+                        <p>Total Premium (GHS)</p>
                     </div>
                 </div>
             </div>
@@ -115,27 +115,26 @@
     <section class="dashboard-content">
         <div class="container">
             <div class="section-title">
-                <h2>Admin Actions</h2>
+                <h2>Quick Actions</h2>
             </div>
             <div class="dashboard-grid">
-                <div class="dashboard-card">
+                <div class="dashboard-card action-card" onclick="openModal('createUserModal')">
                     <div class="icon-wrap">
                         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 3l7 4v5c0 5-3 9-7 11-4-2-7-6-7-11V7l7-4z"></path>
+                            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                         </svg>
                     </div>
-                    <h3>Policy Oversight</h3>
-                    <p>Review active coverage, renewals, and exposure trends.</p>
+                    <h3>Create User</h3>
+                    <p>Register a new client account manually.</p>
                 </div>
-                <div class="dashboard-card">
+                <div class="dashboard-card action-card" onclick="openModal('assignPolicyModal')">
                     <div class="icon-wrap secondary">
                         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 20h9"></path>
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+                            <path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"></path>
                         </svg>
                     </div>
-                    <h3>User Support</h3>
-                    <p>Follow up on user requests and account updates.</p>
+                    <h3>Assign Policy</h3>
+                    <p>Issue a new policy to an existing user.</p>
                 </div>
                 <div class="dashboard-card">
                     <div class="icon-wrap accent">
@@ -144,8 +143,65 @@
                             <path d="M7 13l4-4 4 4 5-6"></path>
                         </svg>
                     </div>
-                    <h3>Growth Metrics</h3>
-                    <p>Track acquisition, premium volume, and retention signals.</p>
+                    <h3>Reports</h3>
+                    <p>Generate performance and risk summaries.</p>
+                </div>
+            </div>
+
+            <!-- Modals -->
+            <div id="createUserModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('createUserModal')">&times;</span>
+                    <h2>Create New User</h2>
+                    <form id="adminCreateUserForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="adminUserName">Full Name</label>
+                            <input type="text" id="adminUserName" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminUserEmail">Email Address</label>
+                            <input type="email" id="adminUserEmail" required placeholder="john@example.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                        <p id="adminCreateUserMessage" class="form-hint"></p>
+                    </form>
+                </div>
+            </div>
+
+            <div id="assignPolicyModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('assignPolicyModal')">&times;</span>
+                    <h2>Assign Policy to User</h2>
+                    <form id="adminAssignPolicyForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="adminPolicyUserId">Select User (ID)</label>
+                            <input type="number" id="adminPolicyUserId" required placeholder="User ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPolicyType">Policy Type</label>
+                            <select id="adminPolicyType" required>
+                                <option value="" disabled selected>Select type</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPolicyCoverage">Coverage Details</label>
+                            <textarea id="adminPolicyCoverage" required rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPolicyStart">Start Date</label>
+                            <input type="date" id="adminPolicyStart" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPolicyEnd">End Date</label>
+                            <input type="date" id="adminPolicyEnd" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPolicyPremium">Premium (GHS)</label>
+                            <input type="number" id="adminPolicyPremium" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Assign Policy</button>
+                        <p id="adminAssignPolicyMessage" class="form-hint"></p>
+                    </form>
                 </div>
             </div>
             <div class="admin-section">
@@ -195,6 +251,7 @@
 
     <script src="../assets/js/core/api.js"></script>
     <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/policy-data.js"></script>
     <script src="../assets/js/core/theme.js"></script>
     <script src="../assets/js/core/smooth-scroll.js"></script>
     <script src="../assets/js/core/nav.js"></script>
