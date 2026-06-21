@@ -5,12 +5,12 @@
       "name": "RAHAMAN PELIGAH",
       "email": "peligahrahaman123@gmail.com",
       "passwordHash": "$2a$10$je3VXgIqynHXv56.cr5QpO9bnirV5LefWX3VPCtWjSVU46JxtgTBy",
-      "phone": "",
+      "phone": "0595969885",
       "address": "",
       "preferences": {
         "renewals": true,
         "claims": true,
-        "announcements": false
+        "announcements": true
       }
     },
     {
@@ -73,12 +73,21 @@
       "status": "active",
       "coverage": "To help me bear the cost of my mental health disease",
       "startDate": "2026-06-03",
-      "endDate": "2030-06-03",
+      "endDate": "2031-06-03",
       "premium": 99.92,
       "currency": "USD"
     }
   ],
-  "notifications": [],
+  "notifications": [
+    {
+      "id": 1,
+      "userId": 3,
+      "type": "renewal",
+      "message": "Health policy policy HEAL-2026-107 renewed through 2031-06-03.",
+      "date": "2026-06-13",
+      "read": false
+    }
+  ],
   "documents": [],
   "invoices": [],
   "paymentMethods": []
