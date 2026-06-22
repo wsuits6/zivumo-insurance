@@ -123,6 +123,11 @@
     box-shadow: var(--shadow-lg);
     position: relative;
 
+    /* Center the form */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     /* Only the form scrolls */
     overflow-y: auto;
 
