@@ -18,6 +18,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.loadAccountSummaries) loadAccountSummaries();
     }
 
+    if (path.includes('password-update.html') && window.initPasswordUpdate) {
+        initPasswordUpdate();
+    }
+
     if (path.includes('policies.html') && window.loadPoliciesPage) {
         loadPoliciesPage();
     }

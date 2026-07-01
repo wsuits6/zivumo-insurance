@@ -58,17 +58,28 @@
     color: var(--text-secondary);
 }
 
-.dashboard-profile {
+.dashboard-cards-row {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: stretch;
     margin-bottom: var(--spacing-lg);
+}
+
+.dashboard-profile {
+    flex-shrink: 0;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-card {
     background: var(--bg-secondary);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
-    padding: var(--spacing-md);
-    display: grid;
-    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-header {
@@ -77,6 +88,9 @@
     justify-content: space-between;
     gap: var(--spacing-md);
     flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .profile-header h3 {
@@ -84,30 +98,43 @@
 }
 
 .profile-body {
-    display: grid;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
     gap: var(--spacing-sm);
 }
 
 .profile-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     gap: var(--spacing-sm);
     font-weight: 600;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.profile-row:last-child {
+    border-bottom: none;
 }
 
 .profile-label {
     color: var(--text-secondary);
     font-weight: 500;
+    font-size: 0.875rem;
 }
 
 .profile-value {
     text-align: right;
+    font-size: 0.9375rem;
 }
 
 .dashboard-stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
+    flex: 1;
 }
 
 .stat-card {
@@ -127,13 +154,13 @@
 }
 
 .stat-info h3 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     color: var(--primary-color);
     margin-bottom: 0.25rem;
 }
 
 .stat-info p {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--text-secondary);
 }
 

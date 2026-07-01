@@ -14,7 +14,7 @@ const createAccountRouter = require('./routes/account');
 const createResourcesRouter = require('./routes/resources');
 
 const app = express();
-const SESSION_SECRET = process.env.SESSION_SECRET || 'zivumo-dev-secret';
+const SESSION_SECRET = process.env.SESSION_SECRET || 'aves-dev-secret';
 
 app.disable('x-powered-by');
 
@@ -26,7 +26,7 @@ app.use(express.json({ limit: '150kb' }));
 app.use(express.urlencoded({ extended: false }));
 
 app.use(session({
-  name: 'zivumo.sid',
+  name: 'aves.sid',
   secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,

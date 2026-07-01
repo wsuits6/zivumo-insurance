@@ -71,7 +71,12 @@
     padding: 0.4rem 0.6rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
-    margin-right: 0.5rem;
+}
+
+.admin-table td:last-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* Modals */
@@ -82,83 +87,26 @@
     z-index: 2000;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-
-    /* Center the form */
-    display: flex;
     justify-content: center;
     align-items: center;
-
-    /* Prevent background scrolling */
     overflow: hidden;
 }
 
-.modal-content {
-    background-color: var(--bg-primary);
-    width: 90%;
-    max-width: 500px;.modal {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 2000;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-
-    /* Center the form */
+.modal.open {
     display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* Prevent background scrolling */
-    overflow: hidden;
 }
 
 .modal-content {
     background-color: var(--bg-primary);
     width: 90%;
     max-width: 500px;
-    max-height: 90vh; /* Keep form inside viewport */
+    max-height: 90vh;
     padding: var(--spacing-xl);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     position: relative;
-
-    /* Center the form */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* Only the form scrolls */
     overflow-y: auto;
-
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.modal-content::-webkit-scrollbar {
-    display: none;
-}
-
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 2rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-    max-height: 90vh; /* Keep form inside viewport */
-    padding: var(--spacing-xl);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    position: relative;
-
-    /* Only the form scrolls */
-    overflow-y: auto;
-
-    /* Hide scrollbar */
     scrollbar-width: none;
     -ms-overflow-style: none;
 }

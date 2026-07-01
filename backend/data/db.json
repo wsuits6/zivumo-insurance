@@ -76,6 +76,18 @@
       "endDate": "2031-06-03",
       "premium": 99.92,
       "currency": "USD"
+    },
+    {
+      "id": 108,
+      "userId": 2,
+      "type": "Life Policy",
+      "policyNumber": "LIFE-2026-108",
+      "status": "active",
+      "coverage": "Financial security for beneficiaries in the event of death, with options for savings and investment components.",
+      "startDate": "2026-07-04",
+      "endDate": "2030-07-04",
+      "premium": 400,
+      "currency": "GHS"
     }
   ],
   "notifications": [

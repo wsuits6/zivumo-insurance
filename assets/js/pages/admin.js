@@ -92,7 +92,7 @@ async function loadAdminDashboard() {
                     <td>${policy.userEmail}</td>
                     <td>${policy.policyNumber}</td>
                     <td>${policy.status.replace('_', ' ')}</td>
-                    <td>${ZivumoUtils.formatCurrency(policy.premium)}</td>
+                    <td>${AvesUtils.formatCurrency(policy.premium)}</td>
                     <td>
                         <select class="admin-status-select" data-policy-id="${policy.id}">
                             <option value="active" ${policy.status === 'active' ? 'selected' : ''}>Active</option>
@@ -124,14 +124,14 @@ window.loadAdminDashboard = loadAdminDashboard;
 function openModal(id) {
     const modal = document.getElementById(id);
     if (modal) {
-        modal.style.display = 'block';
+        modal.classList.add('open');
         if (id === 'assignPolicyModal') populatePolicyTypes('adminPolicyType');
     }
 }
 
 function closeModal(id) {
     const modal = document.getElementById(id);
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.remove('open');
 }
 
 function populatePolicyTypes(selectId) {
@@ -176,18 +176,44 @@ function setupAdminActions() {
     }
 
     if (policyForm) {
+        const adminPolicyStart = document.getElementById('adminPolicyStart');
+        const adminPolicyEnd = document.getElementById('adminPolicyEnd');
+        const adminPolicyPremium = document.getElementById('adminPolicyPremium');
+        const adminPolicyDurationHint = document.getElementById('adminPolicyDurationHint');
+
+        function autoFillAdminPremium() {
+            if (!adminPolicyStart.value || !adminPolicyEnd.value) return;
+            const years = calcPolicyPremium(adminPolicyStart.value, adminPolicyEnd.value);
+            if (years < 1) {
+                adminPolicyDurationHint.textContent = 'Minimum duration is 1 year. Please adjust your dates.';
+                adminPolicyDurationHint.style.color = 'var(--color-error, #dc3545)';
+                adminPolicyPremium.value = '';
+                return;
+            }
+            adminPolicyDurationHint.textContent = '';
+            adminPolicyPremium.value = Math.round(years) * 100;
+        }
+
+        adminPolicyStart.addEventListener('change', autoFillAdminPremium);
+        adminPolicyEnd.addEventListener('change', autoFillAdminPremium);
+
         policyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const years = calcPolicyPremium(adminPolicyStart.value, adminPolicyEnd.value);
+            const msgEl = document.getElementById('adminAssignPolicyMessage');
+            if (years < 1) {
+                msgEl.textContent = 'You cannot assign this policy. The minimum duration is 1 year.';
+                return;
+            }
             const payload = {
                 userId: document.getElementById('adminPolicyUserId').value,
                 type: document.getElementById('adminPolicyType').value,
                 coverage: document.getElementById('adminPolicyCoverage').value,
-                startDate: document.getElementById('adminPolicyStart').value,
-                endDate: document.getElementById('adminPolicyEnd').value,
-                premium: document.getElementById('adminPolicyPremium').value
+                startDate: adminPolicyStart.value,
+                endDate: adminPolicyEnd.value,
+                premium: adminPolicyPremium.value
             };
             const response = await apiRequest('/api/admin/assign-policy', 'POST', payload);
-            const msgEl = document.getElementById('adminAssignPolicyMessage');
             if (response.ok) {
                 msgEl.textContent = 'Policy assigned successfully!';
                 policyForm.reset();

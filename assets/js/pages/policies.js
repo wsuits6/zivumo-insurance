@@ -14,7 +14,7 @@ async function loadPoliciesPage() {
             </div>
             <div>
                 <span class="detail-label">Ends</span>
-                <span class="detail-value">${ZivumoUtils.formatDate(policy.endDate)}</span>
+                <span class="detail-value">${AvesUtils.formatDate(policy.endDate)}</span>
             </div>
             <div class="policy-actions">
                 <a class="btn btn-secondary btn-sm" href="policy-details.html?id=${policy.id}">View Details</a>
@@ -43,9 +43,9 @@ async function loadPolicyDetailsPage() {
             <div><span class="detail-label">Policy Number</span><span class="detail-value">${policy.policyNumber}</span></div>
             <div><span class="detail-label">Status</span><span class="detail-value">${policy.status}</span></div>
             <div><span class="detail-label">Coverage</span><span class="detail-value">${policy.coverage}</span></div>
-            <div><span class="detail-label">Start Date</span><span class="detail-value">${ZivumoUtils.formatDate(policy.startDate)}</span></div>
-            <div><span class="detail-label">End Date</span><span class="detail-value">${ZivumoUtils.formatDate(policy.endDate)}</span></div>
-            <div><span class="detail-label">Premium</span><span class="detail-value">${ZivumoUtils.formatCurrency(policy.premium)}</span></div>
+            <div><span class="detail-label">Start Date</span><span class="detail-value">${AvesUtils.formatDate(policy.startDate)}</span></div>
+            <div><span class="detail-label">End Date</span><span class="detail-value">${AvesUtils.formatDate(policy.endDate)}</span></div>
+            <div><span class="detail-label">Premium</span><span class="detail-value">${AvesUtils.formatCurrency(policy.premium)}</span></div>
         </div>
     `;
 }
@@ -92,18 +92,44 @@ function setupNewPolicy() {
         });
     }
 
+    const policyStart = document.getElementById('policyStart');
+    const policyEnd = document.getElementById('policyEnd');
+    const policyPremium = document.getElementById('policyPremium');
+    const policyDurationHint = document.getElementById('policyDurationHint');
+
+    function autoFillPremium() {
+        if (!policyStart.value || !policyEnd.value) return;
+        const years = calcPolicyPremium(policyStart.value, policyEnd.value);
+        if (years < 1) {
+            policyDurationHint.textContent = 'Minimum duration is 1 year. Please adjust your dates.';
+            policyDurationHint.style.color = 'var(--color-error, #dc3545)';
+            policyPremium.value = '';
+            return;
+        }
+        policyDurationHint.textContent = '';
+        policyPremium.value = Math.round(years) * 100;
+    }
+
+    policyStart.addEventListener('change', autoFillPremium);
+    policyEnd.addEventListener('change', autoFillPremium);
+
     newPolicyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
+        const years = calcPolicyPremium(policyStart.value, policyEnd.value);
+        const messageEl = document.getElementById('newPolicyMessage');
+        if (years < 1) {
+            messageEl.textContent = 'You cannot acquire this policy. The minimum duration is 1 year.';
+            return;
+        }
         const payload = {
             type: typeSelect.value,
             coverage: coverageText.value.trim(),
-            startDate: document.getElementById('policyStart').value,
-            endDate: document.getElementById('policyEnd').value,
-            premium: document.getElementById('policyPremium').value,
+            startDate: policyStart.value,
+            endDate: policyEnd.value,
+            premium: policyPremium.value,
             currency: 'GHS'
         };
         const response = await apiRequest('/api/policies', 'POST', payload);
-        const messageEl = document.getElementById('newPolicyMessage');
         if (response.ok) {
             messageEl.textContent = response.message || 'Policy created.';
             newPolicyForm.reset();

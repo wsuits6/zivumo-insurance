@@ -23,7 +23,7 @@ async function loadAccountSummaries() {
             const latest = documentsRes.data
                 .slice()
                 .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            documentsSummary.textContent = `Latest document generated on ${ZivumoUtils.formatDate(latest.date)}`;
+            documentsSummary.textContent = `Latest document generated on ${AvesUtils.formatDate(latest.date)}`;
         } else {
             documentsSummary.textContent = 'No documents available.';
         }
@@ -34,7 +34,7 @@ async function loadAccountSummaries() {
             const latest = invoicesRes.data
                 .slice()
                 .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            invoicesSummary.textContent = `Last invoice on ${ZivumoUtils.formatDate(latest.date)} · ${latest.status}`;
+            invoicesSummary.textContent = `Last invoice on ${AvesUtils.formatDate(latest.date)} · ${latest.status}`;
         } else {
             invoicesSummary.textContent = 'No invoices available.';
         }
@@ -101,5 +101,46 @@ function initAccountSettings() {
     }
 }
 
+function initPasswordUpdate() {
+    const form = document.getElementById('passwordUpdateForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const msgEl = document.getElementById('passwordUpdateMessage');
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            msgEl.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            msgEl.textContent = 'New password must be at least 8 characters.';
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            msgEl.textContent = 'New passwords do not match.';
+            return;
+        }
+
+        const response = await apiRequest('/api/account/password', 'POST', {
+            currentPassword,
+            newPassword
+        });
+
+        if (response.ok) {
+            msgEl.textContent = response.message || 'Password updated successfully.';
+            form.reset();
+        } else {
+            msgEl.textContent = response.message || 'Unable to update password.';
+        }
+    });
+}
+
 window.loadAccountSummaries = loadAccountSummaries;
 window.initAccountSettings = initAccountSettings;
+window.initPasswordUpdate = initPasswordUpdate;

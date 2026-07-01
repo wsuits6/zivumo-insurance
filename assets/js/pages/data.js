@@ -10,7 +10,7 @@ async function loadDocumentsPage() {
         <div class="data-row">
             <div>
                 <h3>${doc.title}</h3>
-                <p>${ZivumoUtils.formatDate(doc.date)}</p>
+                <p>${AvesUtils.formatDate(doc.date)}</p>
             </div>
             <a class="btn btn-secondary btn-sm" href="${doc.file}" target="_blank" rel="noreferrer">Open</a>
         </div>
@@ -29,9 +29,9 @@ async function loadInvoicesPage() {
         <div class="data-row">
             <div>
                 <h3>Invoice #${invoice.id}</h3>
-                <p>${ZivumoUtils.formatDate(invoice.date)} - ${invoice.status}</p>
+                <p>${AvesUtils.formatDate(invoice.date)} - ${invoice.status}</p>
             </div>
-            <div class="amount">${ZivumoUtils.formatCurrency(invoice.amount)}</div>
+            <div class="amount">${AvesUtils.formatCurrency(invoice.amount)}</div>
         </div>
     `).join('');
 }

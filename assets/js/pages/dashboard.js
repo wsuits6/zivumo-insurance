@@ -26,11 +26,11 @@ function renderPolicyCard(policy) {
                 </div>
                 <div class="policy-detail">
                     <span class="detail-label">Start Date</span>
-                    <span class="detail-value">${ZivumoUtils.formatDate(policy.startDate)}</span>
+                    <span class="detail-value">${AvesUtils.formatDate(policy.startDate)}</span>
                 </div>
                 <div class="policy-detail">
                     <span class="detail-label">Expiration Date</span>
-                    <span class="detail-value">${ZivumoUtils.formatDate(policy.endDate)}</span>
+                    <span class="detail-value">${AvesUtils.formatDate(policy.endDate)}</span>
                 </div>
                 <div class="policy-timeline">
                     <div class="timeline-bar">

@@ -44,6 +44,10 @@
     gap: var(--spacing-md);
 }
 
+.auth-form > .btn {
+    margin-top: var(--spacing-lg);
+}
+
 .auth-footer {
     text-align: center;
     margin-top: var(--spacing-lg);

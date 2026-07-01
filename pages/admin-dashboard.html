@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Zivumo Insurance</title>
+    <title>Admin Dashboard - Aves Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/base.css">
     <link rel="stylesheet" href="../assets/css/layout.css">
@@ -22,9 +22,9 @@
             <div class="nav-content">
                 <div class="logo">
                     <a href="../index.html">
-                        <img src="../assets/images/logo.png" alt="Zivumo Insurance Logo" class="logo-image">
+                        <img src="../assets/images/logo.png" alt="Aves Insurance Logo" class="logo-image">
                         <div class="logo-text">
-                            <h1>Zivumo Admin</h1>
+                            <h1>Aves Admin</h1>
                             <span class="logo-subtitle">Control Center</span>
                         </div>
                     </a>
@@ -32,7 +32,7 @@
                 <div class="nav-links">
                     <a href="admin-dashboard.html" class="nav-link active">Dashboard</a>
                     <a href="../index.html" class="nav-link">Main Site</a>
-                    <a href="../pages/admin-login.html"><button class="btn btn-secondary btn-sm" id="adminLogoutBtn">Logout</button></a>
+                    <button class="btn btn-secondary btn-sm" id="adminLogoutBtn">Logout</button>
                 </div>
                 <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
                     <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -197,7 +197,8 @@
                         </div>
                         <div class="form-group">
                             <label for="adminPolicyPremium">Premium (GHS)</label>
-                            <input type="number" id="adminPolicyPremium" step="0.01" required>
+                            <input type="number" id="adminPolicyPremium" step="0.01" readonly required>
+                            <small class="form-hint" id="adminPolicyDurationHint"></small>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Assign Policy</button>
                         <p id="adminAssignPolicyMessage" class="form-hint"></p>

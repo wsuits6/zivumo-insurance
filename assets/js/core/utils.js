@@ -1,4 +1,4 @@
-const ZivumoUtils = {
+const AvesUtils = {
     formatDate(date) {
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(date).toLocaleDateString('en-US', options);
@@ -24,5 +24,14 @@ function getQueryParam(key) {
     return params.get(key);
 }
 
-window.ZivumoUtils = ZivumoUtils;
+function calcPolicyPremium(startDate, endDate) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffMs = end - start;
+    const diffYears = diffMs / (365.25 * 24 * 60 * 60 * 1000);
+    return diffYears;
+}
+
+window.AvesUtils = AvesUtils;
 window.getQueryParam = getQueryParam;
+window.calcPolicyPremium = calcPolicyPremium;

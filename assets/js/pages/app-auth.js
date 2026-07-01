@@ -81,6 +81,9 @@ function initAppAuth() {
         'documents.html',
         'invoices.html',
         'payment-methods.html',
+        'sessions.html',
+        'mfa-settings.html',
+        'password-update.html',
         'security-review.html',
         'profile-photo.html'
     ];
