@@ -123,3 +123,109 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+/* Admin tabs */
+.admin-tabs {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.admin-tab {
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background 0.2s, color 0.2s;
+}
+
+.admin-tab:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.admin-tab.active {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border-bottom-color: var(--bg-primary);
+    font-weight: 600;
+}
+
+/* Square stat cards in admin header */
+.dashboard-header .dashboard-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+}
+@media (max-width: 768px) {
+    .dashboard-header .dashboard-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card {
+    aspect-ratio: 1 / 1;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border-radius: calc(var(--radius-lg) * 1.5);
+    padding: var(--spacing-sm);
+    max-width: 160px;
+    justify-self: center;
+    width: 100%;
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card .icon-wrap {
+    width: 40px;
+    height: 40px;
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card .icon-wrap .icon {
+    width: 20px;
+    height: 20px;
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card .stat-info h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.1rem;
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card .stat-info p {
+    font-size: 0.7rem;
+}
+
+.dashboard-header .dashboard-stats-grid .stat-card .cedis-icon {
+    font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
+}
+
+/* Cedis icon for Total Premium card */
+.cedis-icon {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    color: inherit;
+}
+
+/* Table action buttons */
+.admin-table td:last-child {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.admin-table td:last-child .btn-sm {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
+}

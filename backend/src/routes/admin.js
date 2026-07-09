@@ -64,7 +64,8 @@ function createAdminRouter({ loginLimiter }) {
       email: user.email,
       phone: user.phone,
       address: user.address,
-      policies: db.policies.filter((p) => p.userId === user.id).length
+      policies: db.policies.filter((p) => p.userId === user.id).length,
+      archived: user.archived || false
     }));
     res.json({ ok: true, data: users });
   });
@@ -130,6 +131,79 @@ function createAdminRouter({ loginLimiter }) {
     db.users.push(newUser);
     await writeDb(db);
     return res.status(201).json({ ok: true, data: { id: newUser.id, name, email }, message: 'User created successfully' });
+  });
+
+  router.post('/users/:id/delete', requireAdmin, async (req, res) => {
+    const userId = Number(req.params.id);
+    const db = await readDb();
+    const index = db.users.findIndex((u) => u.id === userId);
+    if (index === -1) {
+      return res.status(404).json({ ok: false, message: 'User not found' });
+    }
+    db.users.splice(index, 1);
+    db.policies = db.policies.filter((p) => p.userId !== userId);
+    await writeDb(db);
+    return res.json({ ok: true, message: 'User deleted successfully' });
+  });
+
+  router.post('/users/:id/archive', requireAdmin, async (req, res) => {
+    const userId = Number(req.params.id);
+    const db = await readDb();
+    const user = db.users.find((u) => u.id === userId);
+    if (!user) {
+      return res.status(404).json({ ok: false, message: 'User not found' });
+    }
+    user.archived = true;
+    await writeDb(db);
+    return res.json({ ok: true, data: { id: user.id }, message: 'User archived successfully' });
+  });
+
+  router.post('/users/:id/restore', requireAdmin, async (req, res) => {
+    const userId = Number(req.params.id);
+    const db = await readDb();
+    const user = db.users.find((u) => u.id === userId);
+    if (!user) {
+      return res.status(404).json({ ok: false, message: 'User not found' });
+    }
+    user.archived = false;
+    await writeDb(db);
+    return res.json({ ok: true, data: { id: user.id }, message: 'User restored successfully' });
+  });
+
+  router.post('/policies/:id/delete', requireAdmin, async (req, res) => {
+    const policyId = Number(req.params.id);
+    const db = await readDb();
+    const index = db.policies.findIndex((p) => p.id === policyId);
+    if (index === -1) {
+      return res.status(404).json({ ok: false, message: 'Policy not found' });
+    }
+    db.policies.splice(index, 1);
+    await writeDb(db);
+    return res.json({ ok: true, message: 'Policy deleted successfully' });
+  });
+
+  router.post('/policies/:id/archive', requireAdmin, async (req, res) => {
+    const policyId = Number(req.params.id);
+    const db = await readDb();
+    const policy = db.policies.find((p) => p.id === policyId);
+    if (!policy) {
+      return res.status(404).json({ ok: false, message: 'Policy not found' });
+    }
+    policy.archived = true;
+    await writeDb(db);
+    return res.json({ ok: true, data: { id: policy.id }, message: 'Policy archived successfully' });
+  });
+
+  router.post('/policies/:id/restore', requireAdmin, async (req, res) => {
+    const policyId = Number(req.params.id);
+    const db = await readDb();
+    const policy = db.policies.find((p) => p.id === policyId);
+    if (!policy) {
+      return res.status(404).json({ ok: false, message: 'Policy not found' });
+    }
+    policy.archived = false;
+    await writeDb(db);
+    return res.json({ ok: true, data: { id: policy.id }, message: 'Policy restored successfully' });
   });
 
   router.post('/assign-policy', requireAdmin, async (req, res) => {

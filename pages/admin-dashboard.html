@@ -98,10 +98,8 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="icon-wrap">
-                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M12 1v22M5 6h14M5 18h14"></path>
-                        </svg>
+                    <div class="icon-wrap currency-icon">
+                        <span class="cedis-icon" aria-hidden="true">₵</span>
                     </div>
                     <div class="stat-info">
                         <h3 id="adminTotalPremium">--</h3>
@@ -209,6 +207,10 @@
                 <div class="section-title">
                     <h2>Users</h2>
                 </div>
+                <div class="admin-tabs" id="userTabs">
+                    <button class="admin-tab active" data-filter="active">Active</button>
+                    <button class="admin-tab" data-filter="archived">Archived</button>
+                </div>
                 <div class="admin-table-wrap">
                     <table class="admin-table">
                         <thead>
@@ -219,6 +221,7 @@
                                 <th>Phone</th>
                                 <th>Address</th>
                                 <th>Policies</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminUsersTable"></tbody>
@@ -228,6 +231,10 @@
             <div class="admin-section">
                 <div class="section-title">
                     <h2>Policies</h2>
+                </div>
+                <div class="admin-tabs" id="policyTabs">
+                    <button class="admin-tab active" data-filter="active">Active</button>
+                    <button class="admin-tab" data-filter="archived">Archived</button>
                 </div>
                 <div class="admin-table-wrap">
                     <table class="admin-table">
@@ -240,11 +247,24 @@
                                 <th>Policy #</th>
                                 <th>Status</th>
                                 <th>Premium</th>
-                                <th>Update</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="adminPoliciesTable"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Confirm Delete Modal -->
+            <div id="confirmModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+                    <h2>Confirm Deletion</h2>
+                    <p id="confirmModalMessage"></p>
+                    <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                        <button class="btn btn-alert" id="confirmDeleteBtn">Yes, Delete</button>
+                        <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+                    </div>
                 </div>
             </div>
         </div>

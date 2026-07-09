@@ -32,6 +32,205 @@ function setupAdminLogin() {
     });
 }
 
+/* ---------- Filter state ---------- */
+let currentUserFilter = 'active';
+let currentPolicyFilter = 'active';
+
+/* ---------- Confirm delete modal ---------- */
+let _confirmCallback = null;
+
+function showConfirmModal(message, callback) {
+    const msgEl = document.getElementById('confirmModalMessage');
+    if (msgEl) msgEl.textContent = message;
+    _confirmCallback = callback;
+    openModal('confirmModal');
+}
+
+function setupConfirmListener() {
+    const btn = document.getElementById('confirmDeleteBtn');
+    if (btn) {
+        btn.addEventListener('click', () => {
+            if (typeof _confirmCallback === 'function') {
+                _confirmCallback();
+                _confirmCallback = null;
+            }
+            closeModal('confirmModal');
+        });
+    }
+}
+
+/* ---------- Tab switching ---------- */
+function setupTabs() {
+    document.querySelectorAll('.admin-tab').forEach((tab) => {
+        tab.addEventListener('click', () => {
+            const parent = tab.parentElement;
+            const filter = tab.getAttribute('data-filter');
+
+            parent.querySelectorAll('.admin-tab').forEach((t) => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            if (parent.id === 'userTabs') {
+                currentUserFilter = filter;
+            } else if (parent.id === 'policyTabs') {
+                currentPolicyFilter = filter;
+            }
+
+            loadAdminDashboard();
+        });
+    });
+}
+
+/* ---------- Archive / Restore / Delete handlers ---------- */
+async function handleArchiveUser(userId) {
+    const res = await apiRequest(`/api/admin/users/${userId}/archive`, 'POST');
+    if (res.ok) {
+        await loadAdminDashboard();
+    } else {
+        alert(res.message || 'Failed to archive user');
+    }
+}
+
+async function handleRestoreUser(userId) {
+    const res = await apiRequest(`/api/admin/users/${userId}/restore`, 'POST');
+    if (res.ok) {
+        await loadAdminDashboard();
+    } else {
+        alert(res.message || 'Failed to restore user');
+    }
+}
+
+function handleDeleteUser(userId, userName) {
+    showConfirmModal(
+        `Are you sure you want to delete user "${userName}"? This will also remove all their policies.`,
+        async () => {
+            const res = await apiRequest(`/api/admin/users/${userId}/delete`, 'POST');
+            if (res.ok) {
+                await loadAdminDashboard();
+            } else {
+                alert(res.message || 'Failed to delete user');
+            }
+        }
+    );
+}
+
+async function handleArchivePolicy(policyId) {
+    const res = await apiRequest(`/api/admin/policies/${policyId}/archive`, 'POST');
+    if (res.ok) {
+        await loadAdminDashboard();
+    } else {
+        alert(res.message || 'Failed to archive policy');
+    }
+}
+
+async function handleRestorePolicy(policyId) {
+    const res = await apiRequest(`/api/admin/policies/${policyId}/restore`, 'POST');
+    if (res.ok) {
+        await loadAdminDashboard();
+    } else {
+        alert(res.message || 'Failed to restore policy');
+    }
+}
+
+function handleDeletePolicy(policyId, policyNumber) {
+    showConfirmModal(
+        `Are you sure you want to delete policy "${policyNumber}"?`,
+        async () => {
+            const res = await apiRequest(`/api/admin/policies/${policyId}/delete`, 'POST');
+            if (res.ok) {
+                await loadAdminDashboard();
+            } else {
+                alert(res.message || 'Failed to delete policy');
+            }
+        }
+    );
+}
+
+window.handleArchiveUser = handleArchiveUser;
+window.handleRestoreUser = handleRestoreUser;
+window.handleDeleteUser = handleDeleteUser;
+window.handleArchivePolicy = handleArchivePolicy;
+window.handleRestorePolicy = handleRestorePolicy;
+window.handleDeletePolicy = handleDeletePolicy;
+
+/* ---------- Table rendering ---------- */
+function renderUsersTable(users, filter) {
+    const filtered = filter === 'all'
+        ? users
+        : users.filter((u) => filter === 'archived' ? u.archived : !u.archived);
+
+    const tbody = document.getElementById('adminUsersTable');
+    if (!tbody) return;
+
+    tbody.innerHTML = filtered.map((user) => {
+        const isArchived = user.archived;
+        return `
+            <tr>
+                <td>#${user.id}</td>
+                <td>${user.name}</td>
+                <td>${user.email}</td>
+                <td>${user.phone || '--'}</td>
+                <td>${user.address || '--'}</td>
+                <td>${user.policies}</td>
+                <td>
+                    ${isArchived
+                        ? `<button class="btn btn-sm btn-secondary" onclick="handleRestoreUser(${user.id})">Restore</button>`
+                        : `<button class="btn btn-sm btn-secondary" onclick="handleArchiveUser(${user.id})">Archive</button>`
+                    }
+                    <button class="btn btn-sm btn-alert" onclick="handleDeleteUser(${user.id}, '${user.name.replace(/'/g, "\\'")}')">Delete</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function renderPoliciesTable(policies, filter) {
+    const filtered = filter === 'all'
+        ? policies
+        : policies.filter((p) => filter === 'archived' ? p.archived : !p.archived);
+
+    const tbody = document.getElementById('adminPoliciesTable');
+    if (!tbody) return;
+
+    tbody.innerHTML = filtered.map((policy) => {
+        const isArchived = policy.archived;
+        return `
+            <tr>
+                <td>#${policy.id}</td>
+                <td>${policy.type}</td>
+                <td>${policy.userName}</td>
+                <td>${policy.userEmail}</td>
+                <td>${policy.policyNumber}</td>
+                <td>${policy.status.replace('_', ' ')}</td>
+                <td>${AvesUtils.formatCurrency(policy.premium)}</td>
+                <td>
+                    <select class="admin-status-select" data-policy-id="${policy.id}">
+                        <option value="active" ${policy.status === 'active' ? 'selected' : ''}>Active</option>
+                        <option value="pending_renewal" ${policy.status === 'pending_renewal' ? 'selected' : ''}>Pending Renewal</option>
+                        <option value="cancelled" ${policy.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                    <button class="btn btn-secondary btn-sm admin-status-save" data-policy-id="${policy.id}">Save</button>
+                    ${isArchived
+                        ? `<button class="btn btn-sm btn-secondary" onclick="handleRestorePolicy(${policy.id})">Restore</button>`
+                        : `<button class="btn btn-sm btn-secondary" onclick="handleArchivePolicy(${policy.id})">Archive</button>`
+                    }
+                    <button class="btn btn-sm btn-alert" onclick="handleDeletePolicy(${policy.id}, '${policy.policyNumber.replace(/'/g, "\\'")}')">Delete</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    document.querySelectorAll('.admin-status-save').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const policyId = button.getAttribute('data-policy-id');
+            const select = document.querySelector(`.admin-status-select[data-policy-id="${policyId}"]`);
+            if (!select) return;
+            const status = select.value;
+            await apiRequest(`/api/admin/policies/${policyId}/status`, 'POST', { status });
+        });
+    });
+}
+
+/* ---------- Main dashboard loader ---------- */
 async function loadAdminDashboard() {
     const summaryEl = {
         totalUsers: document.getElementById('adminTotalUsers'),
@@ -68,51 +267,14 @@ async function loadAdminDashboard() {
     if (usersTable) {
         const usersResponse = await apiRequest('/api/admin/users', 'GET');
         if (usersResponse.ok) {
-            usersTable.innerHTML = usersResponse.data.map((user) => `
-                <tr>
-                    <td>#${user.id}</td>
-                    <td>${user.name}</td>
-                    <td>${user.email}</td>
-                    <td>${user.phone || '--'}</td>
-                    <td>${user.address || '--'}</td>
-                    <td>${user.policies}</td>
-                </tr>
-            `).join('');
+            renderUsersTable(usersResponse.data, currentUserFilter);
         }
     }
 
     if (policiesTable) {
         const policiesResponse = await apiRequest('/api/admin/policies', 'GET');
         if (policiesResponse.ok) {
-            policiesTable.innerHTML = policiesResponse.data.map((policy) => `
-                <tr>
-                    <td>#${policy.id}</td>
-                    <td>${policy.type}</td>
-                    <td>${policy.userName}</td>
-                    <td>${policy.userEmail}</td>
-                    <td>${policy.policyNumber}</td>
-                    <td>${policy.status.replace('_', ' ')}</td>
-                    <td>${AvesUtils.formatCurrency(policy.premium)}</td>
-                    <td>
-                        <select class="admin-status-select" data-policy-id="${policy.id}">
-                            <option value="active" ${policy.status === 'active' ? 'selected' : ''}>Active</option>
-                            <option value="pending_renewal" ${policy.status === 'pending_renewal' ? 'selected' : ''}>Pending Renewal</option>
-                            <option value="cancelled" ${policy.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                        </select>
-                        <button class="btn btn-secondary btn-sm admin-status-save" data-policy-id="${policy.id}">Save</button>
-                    </td>
-                </tr>
-            `).join('');
-
-            document.querySelectorAll('.admin-status-save').forEach((button) => {
-                button.addEventListener('click', async () => {
-                    const policyId = button.getAttribute('data-policy-id');
-                    const select = document.querySelector(`.admin-status-select[data-policy-id="${policyId}"]`);
-                    if (!select) return;
-                    const status = select.value;
-                    await apiRequest(`/api/admin/policies/${policyId}/status`, 'POST', { status });
-                });
-            });
+            renderPoliciesTable(policiesResponse.data, currentPolicyFilter);
         }
     }
 }
@@ -223,6 +385,10 @@ function setupAdminActions() {
             }
         });
     }
+
+    /* One-time setup for confirm modal listener and tabs */
+    setupConfirmListener();
+    setupTabs();
 }
 
 window.openModal = openModal;
