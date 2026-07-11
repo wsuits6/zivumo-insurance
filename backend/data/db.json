@@ -88,6 +88,18 @@
       "endDate": "2030-07-04",
       "premium": 400,
       "currency": "GHS"
+    },
+    {
+      "id": 109,
+      "userId": 2,
+      "type": "Business Policy",
+      "policyNumber": "BUSI-2026-109",
+      "status": "active",
+      "coverage": "Integrated risk management for enterprises, covering assets, liability, and business interruption.",
+      "startDate": "2026-01-01",
+      "endDate": "2028-01-01",
+      "premium": 200,
+      "currency": "GHS"
     }
   ],
   "notifications": [

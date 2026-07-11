@@ -106,10 +106,13 @@ function createAdminRouter({ loginLimiter }) {
   router.post('/users', requireAdmin, async (req, res) => {
     const name = String(req.body.name || '').trim();
     const email = String(req.body.email || '').trim().toLowerCase();
-    const password = String(req.body.password || 'ChangeMe123!'); // Default password
+    const password = String(req.body.password || '');
 
     if (!name || !email) {
       return res.status(422).json({ ok: false, message: 'Name and email are required' });
+    }
+    if (!password || password.length < 6) {
+      return res.status(422).json({ ok: false, message: 'Password must be at least 6 characters' });
     }
 
     const db = await readDb();
@@ -239,6 +242,141 @@ function createAdminRouter({ loginLimiter }) {
     db.policies.push(policy);
     await writeDb(db);
     return res.status(201).json({ ok: true, data: policy, message: 'Policy assigned successfully' });
+  });
+
+  /* ---------- Reports & Analytics ---------- */
+  router.get('/reports/summary', requireAdmin, async (_req, res) => {
+    try {
+      const db = await readDb();
+      const policies = db.policies || [];
+      const users = db.users || [];
+
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      /* --- Policies per month (from startDate) --- */
+      const policiesByMonth = {};
+      policies.forEach((p) => {
+        const d = new Date(p.startDate);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!policiesByMonth[key]) policiesByMonth[key] = { label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`, count: 0, premium: 0 };
+        policiesByMonth[key].count += 1;
+        policiesByMonth[key].premium += Number(p.premium) || 0;
+      });
+      const sortedMonthKeys = Object.keys(policiesByMonth).sort();
+      const policiesPerMonth = sortedMonthKeys.map((k) => ({ month: policiesByMonth[k].label, count: policiesByMonth[k].count }));
+      const premiumPerMonth = sortedMonthKeys.map((k) => ({ month: policiesByMonth[k].label, total: Number(policiesByMonth[k].premium.toFixed(2)) }));
+
+      /* --- Users per month (from id ordering as proxy for creation time) --- */
+      const usersPerMonth = {};
+      users.forEach((u) => {
+        const d = new Date(Date.UTC(2026, 0, 1));
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!usersPerMonth[key]) usersPerMonth[key] = { label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`, count: 0 };
+        usersPerMonth[key].count += 1;
+      });
+
+      /* --- Policy type distribution (pie) --- */
+      const typeCounts = {};
+      policies.forEach((p) => {
+        const t = p.type || 'Unknown';
+        typeCounts[t] = (typeCounts[t] || 0) + 1;
+      });
+      const policyTypeDistribution = Object.entries(typeCounts)
+        .map(([name, value]) => ({ name, value }))
+        .sort((a, b) => b.value - a.value);
+
+      /* --- Policy status breakdown (pie) --- */
+      const statusCounts = {};
+      policies.forEach((p) => {
+        const s = p.status || 'unknown';
+        statusCounts[s] = (statusCounts[s] || 0) + 1;
+      });
+      const policyStatusBreakdown = Object.entries(statusCounts)
+        .map(([name, value]) => ({ name, value }));
+
+      /* --- User status distribution (pie) --- */
+      let activeUsers = 0;
+      let archivedUsers = 0;
+      users.forEach((u) => {
+        if (u.archived) archivedUsers++;
+        else activeUsers++;
+      });
+
+      /* --- Summary numbers --- */
+      const totalUsers = users.length;
+      const totalPolicies = policies.length;
+      const activePolicies = policies.filter((p) => p.status === 'active').length;
+      const pendingPolicies = policies.filter((p) => p.status === 'pending_renewal').length;
+      const cancelledPolicies = policies.filter((p) => p.status === 'cancelled').length;
+      const totalPremium = policies.reduce((s, p) => s + (Number(p.premium) || 0), 0);
+
+      /* --- Auto-generated text summary --- */
+      const summaryLines = [];
+
+      if (totalPolicies === 0) {
+        summaryLines.push('No policies have been created yet. Data will appear once policies are added.');
+      } else {
+        if (policyTypeDistribution.length > 0) {
+          const top = policyTypeDistribution[0];
+          const pct = ((top.value / totalPolicies) * 100).toFixed(1);
+          summaryLines.push(`The most popular policy type is "${top.name}" with ${top.value} policies (${pct}% of all policies).`);
+        }
+
+        if (sortedMonthKeys.length >= 2) {
+          const latest = policiesByMonth[sortedMonthKeys[sortedMonthKeys.length - 1]];
+          const prev = policiesByMonth[sortedMonthKeys[sortedMonthKeys.length - 2]];
+          if (prev.count > 0) {
+            const change = (((latest.count - prev.count) / prev.count) * 100).toFixed(1);
+            const direction = latest.count >= prev.count ? 'increased' : 'decreased';
+            summaryLines.push(`Policy signups ${direction} by ${Math.abs(change)}% from ${prev.label} (${prev.count}) to ${latest.label} (${latest.count}).`);
+          } else {
+            summaryLines.push(`${latest.label} saw ${latest.count} new policy signups.`);
+          }
+        } else if (sortedMonthKeys.length === 1) {
+          const latest = policiesByMonth[sortedMonthKeys[0]];
+          summaryLines.push(`${latest.label} saw ${latest.count} policy signups.`);
+        }
+
+        if (totalPolicies > 0) {
+          const ratio = activePolicies / totalPolicies;
+          summaryLines.push(`${activePolicies} of ${totalPolicies} policies are active (${(ratio * 100).toFixed(1)}% active, ${pendingPolicies} pending renewal, ${cancelledPolicies} cancelled).`);
+        }
+
+        summaryLines.push(`Total premium collected across all policies: GHS ${totalPremium.toFixed(2)}.`);
+      }
+
+      if (totalUsers > 0) {
+        const userPct = ((activeUsers / totalUsers) * 100).toFixed(1);
+        summaryLines.push(`${activeUsers} of ${totalUsers} users are active (${userPct}% active, ${archivedUsers} archived).`);
+      }
+
+      res.json({
+        ok: true,
+        data: {
+          policiesPerMonth,
+          premiumPerMonth,
+          usersPerMonth,
+          policyTypeDistribution,
+          policyStatusBreakdown,
+          userStatusDistribution: [
+            { name: 'Active', value: activeUsers },
+            { name: 'Archived', value: archivedUsers }
+          ],
+          totals: {
+            totalUsers,
+            totalPolicies,
+            activePolicies,
+            pendingPolicies,
+            cancelledPolicies,
+            totalPremium: Number(totalPremium.toFixed(2))
+          },
+          summaryLines
+        }
+      });
+    } catch (err) {
+      res.status(500).json({ ok: false, message: 'Failed to generate report data' });
+    }
   });
 
   return router;

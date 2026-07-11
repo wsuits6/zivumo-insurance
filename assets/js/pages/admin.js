@@ -321,18 +321,35 @@ function setupAdminActions() {
     if (userForm) {
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const msgEl = document.getElementById('adminCreateUserMessage');
+            const password = document.getElementById('adminUserPassword').value;
+            const confirm = document.getElementById('adminUserConfirmPassword').value;
+
+            if (password !== confirm) {
+                msgEl.textContent = 'Passwords do not match.';
+                msgEl.classList.add('form-message-error');
+                return;
+            }
+            if (password.length < 6) {
+                msgEl.textContent = 'Password must be at least 6 characters.';
+                msgEl.classList.add('form-message-error');
+                return;
+            }
+
             const payload = {
                 name: document.getElementById('adminUserName').value.trim(),
-                email: document.getElementById('adminUserEmail').value.trim()
+                email: document.getElementById('adminUserEmail').value.trim(),
+                password: password
             };
             const response = await apiRequest('/api/admin/users', 'POST', payload);
-            const msgEl = document.getElementById('adminCreateUserMessage');
             if (response.ok) {
-                msgEl.textContent = 'User created! Default password: ChangeMe123!';
+                msgEl.classList.remove('form-message-error');
+                msgEl.textContent = `User created! Login with: ${payload.email} / ${password}`;
                 userForm.reset();
-                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 2000);
+                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 3000);
             } else {
                 msgEl.textContent = response.message || 'Error creating user.';
+                msgEl.classList.add('form-message-error');
             }
         });
     }
@@ -394,3 +411,217 @@ function setupAdminActions() {
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.setupAdminActions = setupAdminActions;
+
+/* ---------- Reports & Analytics ---------- */
+let _reportCharts = [];
+
+function destroyReportCharts() {
+    _reportCharts.forEach((c) => { try { c.destroy(); } catch (_) {} });
+    _reportCharts = [];
+}
+
+function openReportsModal() {
+    openModal('reportsModal');
+    loadReportsData();
+}
+
+async function loadReportsData() {
+    const loadingEl = document.getElementById('reportsLoadingState');
+    const emptyEl = document.getElementById('reportsEmptyState');
+    const errorEl = document.getElementById('reportsErrorState');
+    const contentEl = document.getElementById('reportsContent');
+    const errorMsg = document.getElementById('reportsErrorMessage');
+
+    loadingEl.style.display = 'flex';
+    emptyEl.style.display = 'none';
+    errorEl.style.display = 'none';
+    contentEl.style.display = 'none';
+
+    destroyReportCharts();
+
+    const res = await apiRequest('/api/admin/reports/summary', 'GET');
+
+    loadingEl.style.display = 'none';
+
+    if (!res.ok) {
+        errorEl.style.display = 'block';
+        if (errorMsg) errorMsg.textContent = res.message || 'Failed to load report data.';
+        return;
+    }
+
+    const data = res.data;
+    const hasPolicyData = data.totals.totalPolicies > 0;
+    const hasUserData = data.totals.totalUsers > 0;
+
+    if (!hasPolicyData && !hasUserData) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    contentEl.style.display = 'block';
+    renderReportCharts(data);
+    renderReportSummary(data);
+}
+
+function renderReportCharts(data) {
+    const rootStyles = getComputedStyle(document.documentElement);
+    const primary = rootStyles.getPropertyValue('--primary-color').trim() || '#0B6E6E';
+    const secondary = rootStyles.getPropertyValue('--secondary-color').trim() || '#D18B2C';
+    const accent = rootStyles.getPropertyValue('--accent-color').trim() || '#1F3A93';
+    const textSecondary = rootStyles.getPropertyValue('--text-secondary').trim() || '#4B5B66';
+
+    const chartColors = [
+        primary, secondary, accent, '#1C8B6A', '#9DB8FF', '#F2B35D',
+        '#D1494E', '#59D4C0', '#8B5CF6', '#EC4899', '#06B6D4'
+    ];
+
+    Chart.defaults.font.family = '"Manrope", sans-serif';
+    Chart.defaults.color = textSecondary;
+
+    /* --- Bar chart: policies per month --- */
+    if (data.policiesPerMonth.length > 0) {
+        const ctx1 = document.getElementById('policiesPerMonthChart');
+        if (ctx1) {
+            const chart = new Chart(ctx1.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: data.policiesPerMonth.map((d) => d.month),
+                    datasets: [{
+                        label: 'Policies',
+                        data: data.policiesPerMonth.map((d) => d.count),
+                        backgroundColor: primary + 'CC',
+                        borderColor: primary,
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            grid: { color: 'rgba(0,0,0,0.06)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+            _reportCharts.push(chart);
+        }
+    }
+
+    /* --- Bar chart: premium per month --- */
+    if (data.premiumPerMonth.length > 0) {
+        const ctx2 = document.getElementById('premiumPerMonthChart');
+        if (ctx2) {
+            const chart = new Chart(ctx2.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: data.premiumPerMonth.map((d) => d.month),
+                    datasets: [{
+                        label: 'Premium (GHS)',
+                        data: data.premiumPerMonth.map((d) => d.total),
+                        backgroundColor: secondary + 'CC',
+                        borderColor: secondary,
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.06)' },
+                            ticks: { callback: (v) => 'GHS ' + v.toLocaleString() }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+            _reportCharts.push(chart);
+        }
+    }
+
+    /* --- Pie chart: policy type distribution --- */
+    if (data.policyTypeDistribution.length > 0) {
+        const ctx3 = document.getElementById('policyTypeChart');
+        if (ctx3) {
+            const chart = new Chart(ctx3.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: data.policyTypeDistribution.map((d) => d.name),
+                    datasets: [{
+                        data: data.policyTypeDistribution.map((d) => d.value),
+                        backgroundColor: chartColors.slice(0, data.policyTypeDistribution.length),
+                        borderWidth: 2,
+                        borderColor: 'var(--bg-primary, #F9F7F2)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyleWidth: 10 } }
+                    }
+                }
+            });
+            _reportCharts.push(chart);
+        }
+    }
+
+    /* --- Pie chart: policy status breakdown --- */
+    if (data.policyStatusBreakdown.length > 0) {
+        const ctx4 = document.getElementById('policyStatusChart');
+        if (ctx4) {
+            const statusColors = {
+                active: '#1C8B6A',
+                pending_renewal: '#D18B2C',
+                cancelled: '#D1494E',
+                unknown: '#999'
+            };
+            const labels = data.policyStatusBreakdown.map((d) => d.name.replace('_', ' '));
+            const colors = data.policyStatusBreakdown.map((d) => statusColors[d.name] || '#999');
+
+            const chart = new Chart(ctx4.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data.policyStatusBreakdown.map((d) => d.value),
+                        backgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: 'var(--bg-primary, #F9F7F2)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true, pointStyleWidth: 10 } }
+                    }
+                }
+            });
+            _reportCharts.push(chart);
+        }
+    }
+}
+
+function renderReportSummary(data) {
+    const list = document.getElementById('reportsSummaryList');
+    if (!list) return;
+    list.innerHTML = '';
+    (data.summaryLines || []).forEach((line) => {
+        const li = document.createElement('li');
+        li.textContent = line;
+        list.appendChild(li);
+    });
+}
+
+window.openReportsModal = openReportsModal;
+window.loadReportsData = loadReportsData;

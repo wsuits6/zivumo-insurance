@@ -119,6 +119,7 @@ function setupNewPolicy() {
         const messageEl = document.getElementById('newPolicyMessage');
         if (years < 1) {
             messageEl.textContent = 'You cannot acquire this policy. The minimum duration is 1 year.';
+            messageEl.classList.add('form-message-error');
             return;
         }
         const payload = {
@@ -131,10 +132,12 @@ function setupNewPolicy() {
         };
         const response = await apiRequest('/api/policies', 'POST', payload);
         if (response.ok) {
+            messageEl.classList.remove('form-message-error');
             messageEl.textContent = response.message || 'Policy created.';
             newPolicyForm.reset();
         } else {
             messageEl.textContent = response.message || 'Unable to create policy.';
+            messageEl.classList.add('form-message-error');
         }
     });
 }

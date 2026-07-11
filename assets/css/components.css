@@ -166,6 +166,12 @@
     color: var(--primary-color);
     font-weight: 600;
     text-align: center;
+    font-size: 0.875rem;
+    min-height: 0;
+}
+
+.form-message:empty {
+    display: none;
 }
 
 .form-message-error {
