@@ -322,8 +322,12 @@ function setupAdminActions() {
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const msgEl = document.getElementById('adminCreateUserMessage');
+            const submitBtn = userForm.querySelector('button[type="submit"]');
             const password = document.getElementById('adminUserPassword').value;
             const confirm = document.getElementById('adminUserConfirmPassword').value;
+
+            msgEl.textContent = '';
+            msgEl.classList.remove('form-message-error');
 
             if (password !== confirm) {
                 msgEl.textContent = 'Passwords do not match.';
@@ -341,12 +345,20 @@ function setupAdminActions() {
                 email: document.getElementById('adminUserEmail').value.trim(),
                 password: password
             };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+
             const response = await apiRequest('/api/admin/users', 'POST', payload);
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account';
+
             if (response.ok) {
                 msgEl.classList.remove('form-message-error');
-                msgEl.textContent = `User created! Login with: ${payload.email} / ${password}`;
+                msgEl.textContent = 'Account created! Log in on the main site using the credentials you used to view your dashboard.';
                 userForm.reset();
-                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 3000);
+                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 4000);
             } else {
                 msgEl.textContent = response.message || 'Error creating user.';
                 msgEl.classList.add('form-message-error');
@@ -426,24 +438,21 @@ function openReportsModal() {
 }
 
 async function loadReportsData() {
-    const loadingEl = document.getElementById('reportsLoadingState');
     const emptyEl = document.getElementById('reportsEmptyState');
     const errorEl = document.getElementById('reportsErrorState');
     const contentEl = document.getElementById('reportsContent');
     const errorMsg = document.getElementById('reportsErrorMessage');
 
-    loadingEl.style.display = 'flex';
     emptyEl.style.display = 'none';
     errorEl.style.display = 'none';
-    contentEl.style.display = 'none';
+    contentEl.style.display = 'block';
 
     destroyReportCharts();
 
     const res = await apiRequest('/api/admin/reports/summary', 'GET');
 
-    loadingEl.style.display = 'none';
-
     if (!res.ok) {
+        contentEl.style.display = 'none';
         errorEl.style.display = 'block';
         if (errorMsg) errorMsg.textContent = res.message || 'Failed to load report data.';
         return;
@@ -454,11 +463,11 @@ async function loadReportsData() {
     const hasUserData = data.totals.totalUsers > 0;
 
     if (!hasPolicyData && !hasUserData) {
+        contentEl.style.display = 'none';
         emptyEl.style.display = 'block';
         return;
     }
 
-    contentEl.style.display = 'block';
     renderReportCharts(data);
     renderReportSummary(data);
 }

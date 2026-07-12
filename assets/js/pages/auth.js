@@ -91,10 +91,10 @@ class FormValidator {
                 if (!response.ok) {
                     throw new Error(response.message || 'Signup failed');
                 }
-                this.showMessage('Account created! Redirecting to login...', 'success');
+                this.showMessage('Account created! Login to the main site to view your dashboard.', 'success');
                 setTimeout(() => {
                     window.location.href = 'login.html';
-                }, 1200);
+                }, 1500);
             })
             .catch((error) => {
                 this.showMessage(error.message, 'error');

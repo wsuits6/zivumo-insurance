@@ -311,28 +311,6 @@
     max-width: 860px;
 }
 
-.reports-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding: var(--spacing-xl) 0;
-    color: var(--text-secondary);
-}
-
-.reports-spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid var(--border-color);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: reports-spin 0.7s linear infinite;
-}
-
-@keyframes reports-spin {
-    to { transform: rotate(360deg); }
-}
-
 .reports-empty,
 .reports-error {
     text-align: center;

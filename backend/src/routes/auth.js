@@ -9,45 +9,50 @@ function createAuthRouter({ loginLimiter }) {
   const router = express.Router();
 
   router.post('/signup', async (req, res) => {
-    const name = String(req.body.name || '').trim();
-    const email = sanitizeEmail(req.body.email);
-    const password = String(req.body.password || '');
+    try {
+      const name = String(req.body.name || '').trim();
+      const email = sanitizeEmail(req.body.email);
+      const password = String(req.body.password || '');
 
-    if (!name || !email || !password) {
-      return res.status(422).json({ ok: false, message: 'Name, email, and password are required' });
-    }
-    if (!isValidEmail(email)) {
-      return res.status(422).json({ ok: false, message: 'Invalid email address' });
-    }
-    if (password.length < 8) {
-      return res.status(422).json({ ok: false, message: 'Password must be at least 8 characters' });
-    }
-
-    const db = await readDb();
-    const exists = db.users.find((u) => u.email === email);
-    if (exists) {
-      return res.status(409).json({ ok: false, message: 'Email already exists' });
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = {
-      id: getNextId(db.users),
-      name,
-      email,
-      passwordHash,
-      phone: '',
-      address: '',
-      preferences: {
-        renewals: true,
-        claims: true,
-        announcements: false
+      if (!name || !email || !password) {
+        return res.status(422).json({ ok: false, message: 'Name, email, and password are required' });
       }
-    };
+      if (!isValidEmail(email)) {
+        return res.status(422).json({ ok: false, message: 'Invalid email address' });
+      }
+      if (password.length < 8) {
+        return res.status(422).json({ ok: false, message: 'Password must be at least 8 characters' });
+      }
 
-    db.users.push(newUser);
-    await writeDb(db);
+      const db = await readDb();
+      const exists = db.users.find((u) => u.email === email);
+      if (exists) {
+        return res.status(409).json({ ok: false, message: 'Email already exists' });
+      }
 
-    return res.status(201).json({ ok: true, message: 'Account created' });
+      const passwordHash = await bcrypt.hash(password, 10);
+      const newUser = {
+        id: getNextId(db.users),
+        name,
+        email,
+        passwordHash,
+        phone: '',
+        address: '',
+        preferences: {
+          renewals: true,
+          claims: true,
+          announcements: false
+        }
+      };
+
+      db.users.push(newUser);
+      await writeDb(db);
+
+      return res.status(201).json({ ok: true, message: 'Account created' });
+    } catch (err) {
+      console.error('Signup error:', err);
+      return res.status(500).json({ ok: false, message: 'Server error. Please try again later.' });
+    }
   });
 
   router.post('/login', loginLimiter, async (req, res) => {

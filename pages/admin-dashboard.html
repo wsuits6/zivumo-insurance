@@ -293,10 +293,6 @@
                 <div class="modal-content modal-content--wide">
                     <span class="close" onclick="closeModal('reportsModal')">&times;</span>
                     <h2>Reports &amp; Analytics</h2>
-                    <div id="reportsLoadingState" class="reports-loading">
-                        <div class="reports-spinner"></div>
-                        <p>Loading report data...</p>
-                    </div>
                     <div id="reportsEmptyState" class="reports-empty" style="display:none;">
                         <p>Not enough data to generate report. Add policies and users first.</p>
                     </div>
@@ -304,7 +300,7 @@
                         <p id="reportsErrorMessage">Failed to load report data.</p>
                         <button class="btn btn-secondary btn-sm" onclick="loadReportsData()">Retry</button>
                     </div>
-                    <div id="reportsContent" class="reports-content" style="display:none;">
+                    <div id="reportsContent" class="reports-content">
                         <div class="reports-charts-grid">
                             <div class="reports-chart-card">
                                 <h3>Policies Created Per Month</h3>

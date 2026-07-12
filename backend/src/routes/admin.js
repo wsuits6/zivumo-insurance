@@ -1,15 +1,17 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { readDb, writeDb } = require('../db');
+const { readDb, writeDb, getNextId } = require('../db');
 const { requireAdmin } = require('../middleware/auth');
 
 const ADMIN_PASSWORD_SEED = process.env.ADMIN_PASSWORD_SEED || '';
 const ADMIN_PASSWORD_HASH = ADMIN_PASSWORD_SEED ? bcrypt.hashSync(ADMIN_PASSWORD_SEED, 10) : null;
 
+const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+
 function createAdminRouter({ loginLimiter }) {
   const router = express.Router();
 
-  router.post('/login', loginLimiter, async (req, res) => {
+  router.post('/login', loginLimiter, asyncHandler(async (req, res) => {
     const password = String(req.body.password || '');
 
     if (!ADMIN_PASSWORD_SEED || !ADMIN_PASSWORD_HASH) {
@@ -26,7 +28,7 @@ function createAdminRouter({ loginLimiter }) {
 
     req.session.isAdmin = true;
     return res.json({ ok: true, message: 'Admin authenticated' });
-  });
+  }));
 
   router.post('/logout', (req, res) => {
     req.session.destroy(() => {
@@ -38,7 +40,7 @@ function createAdminRouter({ loginLimiter }) {
     res.json({ ok: true, data: { role: 'admin' } });
   });
 
-  router.get('/summary', requireAdmin, async (_req, res) => {
+  router.get('/summary', requireAdmin, asyncHandler(async (_req, res) => {
     const db = await readDb();
     const totalUsers = db.users.length;
     const totalPolicies = db.policies.length;
@@ -54,9 +56,9 @@ function createAdminRouter({ loginLimiter }) {
         totalPremium: totalPremium.toFixed(2)
       }
     });
-  });
+  }));
 
-  router.get('/users', requireAdmin, async (_req, res) => {
+  router.get('/users', requireAdmin, asyncHandler(async (_req, res) => {
     const db = await readDb();
     const users = db.users.map((user) => ({
       id: user.id,
@@ -68,9 +70,9 @@ function createAdminRouter({ loginLimiter }) {
       archived: user.archived || false
     }));
     res.json({ ok: true, data: users });
-  });
+  }));
 
-  router.get('/policies', requireAdmin, async (_req, res) => {
+  router.get('/policies', requireAdmin, asyncHandler(async (_req, res) => {
     const db = await readDb();
     const policies = db.policies.map((policy) => {
       const owner = db.users.find((u) => u.id === policy.userId);
@@ -81,9 +83,9 @@ function createAdminRouter({ loginLimiter }) {
       };
     });
     res.json({ ok: true, data: policies });
-  });
+  }));
 
-  router.post('/policies/:id/status', requireAdmin, async (req, res) => {
+  router.post('/policies/:id/status', requireAdmin, asyncHandler(async (req, res) => {
     const policyId = Number(req.params.id);
     const status = String(req.body.status || '').trim();
     const allowed = new Set(['active', 'pending_renewal', 'cancelled']);
@@ -101,9 +103,9 @@ function createAdminRouter({ loginLimiter }) {
     policy.status = status;
     await writeDb(db);
     return res.json({ ok: true, data: policy, message: 'Policy status updated' });
-  });
+  }));
 
-  router.post('/users', requireAdmin, async (req, res) => {
+  router.post('/users', requireAdmin, asyncHandler(async (req, res) => {
     const name = String(req.body.name || '').trim();
     const email = String(req.body.email || '').trim().toLowerCase();
     const password = String(req.body.password || '');
@@ -134,9 +136,9 @@ function createAdminRouter({ loginLimiter }) {
     db.users.push(newUser);
     await writeDb(db);
     return res.status(201).json({ ok: true, data: { id: newUser.id, name, email }, message: 'User created successfully' });
-  });
+  }));
 
-  router.post('/users/:id/delete', requireAdmin, async (req, res) => {
+  router.post('/users/:id/delete', requireAdmin, asyncHandler(async (req, res) => {
     const userId = Number(req.params.id);
     const db = await readDb();
     const index = db.users.findIndex((u) => u.id === userId);
@@ -147,9 +149,9 @@ function createAdminRouter({ loginLimiter }) {
     db.policies = db.policies.filter((p) => p.userId !== userId);
     await writeDb(db);
     return res.json({ ok: true, message: 'User deleted successfully' });
-  });
+  }));
 
-  router.post('/users/:id/archive', requireAdmin, async (req, res) => {
+  router.post('/users/:id/archive', requireAdmin, asyncHandler(async (req, res) => {
     const userId = Number(req.params.id);
     const db = await readDb();
     const user = db.users.find((u) => u.id === userId);
@@ -159,9 +161,9 @@ function createAdminRouter({ loginLimiter }) {
     user.archived = true;
     await writeDb(db);
     return res.json({ ok: true, data: { id: user.id }, message: 'User archived successfully' });
-  });
+  }));
 
-  router.post('/users/:id/restore', requireAdmin, async (req, res) => {
+  router.post('/users/:id/restore', requireAdmin, asyncHandler(async (req, res) => {
     const userId = Number(req.params.id);
     const db = await readDb();
     const user = db.users.find((u) => u.id === userId);
@@ -171,9 +173,9 @@ function createAdminRouter({ loginLimiter }) {
     user.archived = false;
     await writeDb(db);
     return res.json({ ok: true, data: { id: user.id }, message: 'User restored successfully' });
-  });
+  }));
 
-  router.post('/policies/:id/delete', requireAdmin, async (req, res) => {
+  router.post('/policies/:id/delete', requireAdmin, asyncHandler(async (req, res) => {
     const policyId = Number(req.params.id);
     const db = await readDb();
     const index = db.policies.findIndex((p) => p.id === policyId);
@@ -183,9 +185,9 @@ function createAdminRouter({ loginLimiter }) {
     db.policies.splice(index, 1);
     await writeDb(db);
     return res.json({ ok: true, message: 'Policy deleted successfully' });
-  });
+  }));
 
-  router.post('/policies/:id/archive', requireAdmin, async (req, res) => {
+  router.post('/policies/:id/archive', requireAdmin, asyncHandler(async (req, res) => {
     const policyId = Number(req.params.id);
     const db = await readDb();
     const policy = db.policies.find((p) => p.id === policyId);
@@ -195,9 +197,9 @@ function createAdminRouter({ loginLimiter }) {
     policy.archived = true;
     await writeDb(db);
     return res.json({ ok: true, data: { id: policy.id }, message: 'Policy archived successfully' });
-  });
+  }));
 
-  router.post('/policies/:id/restore', requireAdmin, async (req, res) => {
+  router.post('/policies/:id/restore', requireAdmin, asyncHandler(async (req, res) => {
     const policyId = Number(req.params.id);
     const db = await readDb();
     const policy = db.policies.find((p) => p.id === policyId);
@@ -207,9 +209,9 @@ function createAdminRouter({ loginLimiter }) {
     policy.archived = false;
     await writeDb(db);
     return res.json({ ok: true, data: { id: policy.id }, message: 'Policy restored successfully' });
-  });
+  }));
 
-  router.post('/assign-policy', requireAdmin, async (req, res) => {
+  router.post('/assign-policy', requireAdmin, asyncHandler(async (req, res) => {
     const { userId, type, coverage, startDate, endDate, premium } = req.body;
 
     if (!userId || !type || !coverage || !startDate || !endDate || !premium) {
@@ -242,7 +244,7 @@ function createAdminRouter({ loginLimiter }) {
     db.policies.push(policy);
     await writeDb(db);
     return res.status(201).json({ ok: true, data: policy, message: 'Policy assigned successfully' });
-  });
+  }));
 
   /* ---------- Reports & Analytics ---------- */
   router.get('/reports/summary', requireAdmin, async (_req, res) => {

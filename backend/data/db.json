@@ -38,6 +38,19 @@
         "claims": true,
         "announcements": false
       }
+    },
+    {
+      "id": 5,
+      "name": "Majeed Mutaru",
+      "email": "majeedmutaru@gmail.com",
+      "passwordHash": "$2a$10$qZ0Ja4TuCuTYqvqh0yFqqOhKCdnrFNP7zv1lspONBN3XI2NdiV0Aa",
+      "phone": "",
+      "address": "",
+      "preferences": {
+        "renewals": true,
+        "claims": true,
+        "announcements": false
+      }
     }
   ],
   "policies": [
@@ -98,6 +111,18 @@
       "coverage": "Integrated risk management for enterprises, covering assets, liability, and business interruption.",
       "startDate": "2026-01-01",
       "endDate": "2028-01-01",
+      "premium": 200,
+      "currency": "GHS"
+    },
+    {
+      "id": 110,
+      "userId": 5,
+      "type": "Motor Policy",
+      "policyNumber": "MOTO-2026-110",
+      "status": "active",
+      "coverage": "Mandatory and optional coverage for vehicles against accidents, theft, and third-party liability.",
+      "startDate": "2026-02-02",
+      "endDate": "2028-02-02",
       "premium": 200,
       "currency": "GHS"
     }

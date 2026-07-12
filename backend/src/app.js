@@ -22,6 +22,24 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const isDevOrigin = origin && (
+    /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)
+    || origin === 'null'
+  );
+  if (isDevOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 app.use(express.json({ limit: '150kb' }));
 app.use(express.urlencoded({ extended: false }));
 
@@ -106,5 +124,22 @@ app.use('/api/admin', createAdminRouter({ loginLimiter }));
 app.use('/api', createPoliciesRouter());
 app.use('/api', createAccountRouter());
 app.use('/api', createResourcesRouter());
+
+app.get('/pages/admin-login.html', (_req, res) => {
+  res.sendFile(path.join(ROOT_DIR, 'pages', 'admin-login.html'));
+});
+
+app.get('/pages/admin-dashboard.html', (_req, res) => {
+  res.sendFile(path.join(ROOT_DIR, 'pages', 'admin-dashboard.html'));
+});
+
+app.use((_req, res) => {
+  res.status(404).json({ ok: false, message: 'Not found' });
+});
+
+app.use((err, _req, res, _next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ ok: false, message: 'Internal server error' });
+});
 
 module.exports = app;
