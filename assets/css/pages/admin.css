@@ -99,7 +99,7 @@
 .modal-content {
     background-color: var(--bg-primary);
     width: 90%;
-    max-width: 500px;
+    max-width: 560px;
     max-height: 90vh;
     padding: var(--spacing-xl);
     border: 1px solid var(--border-color);

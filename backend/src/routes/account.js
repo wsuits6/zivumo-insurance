@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const { writeDb } = require('../db');
 const { requireAuth } = require('../middleware/auth');
 const { sanitizeEmail, isValidEmail } = require('../utils/validation');
@@ -72,6 +73,28 @@ function createAccountRouter() {
     };
     await writeDb(req.db);
     res.json({ ok: true, message: 'Preferences updated' });
+  });
+
+  router.post('/account/password', requireAuth, async (req, res) => {
+    const currentPassword = String(req.body.currentPassword || '');
+    const newPassword = String(req.body.newPassword || '');
+
+    if (!currentPassword || !newPassword) {
+      return res.status(422).json({ ok: false, message: 'Current and new password are required' });
+    }
+    if (newPassword.length < 8) {
+      return res.status(422).json({ ok: false, message: 'New password must be at least 8 characters' });
+    }
+
+    const match = await bcrypt.compare(currentPassword, req.user.passwordHash);
+    if (!match) {
+      return res.status(400).json({ ok: false, message: 'password doesn\'t match' });
+    }
+
+    req.user.passwordHash = await bcrypt.hash(newPassword, 10);
+    await writeDb(req.db);
+
+    return res.json({ ok: true, message: 'password changed' });
   });
 
   return router;

@@ -112,18 +112,23 @@ function initPasswordUpdate() {
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
 
+        msgEl.classList.remove('form-message-error');
+
         if (!currentPassword || !newPassword || !confirmPassword) {
             msgEl.textContent = 'Please fill in all fields.';
+            msgEl.classList.add('form-message-error');
             return;
         }
 
         if (newPassword.length < 8) {
             msgEl.textContent = 'New password must be at least 8 characters.';
+            msgEl.classList.add('form-message-error');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            msgEl.textContent = 'New passwords do not match.';
+            msgEl.textContent = 'password doesn\'t match';
+            msgEl.classList.add('form-message-error');
             return;
         }
 
@@ -133,10 +138,11 @@ function initPasswordUpdate() {
         });
 
         if (response.ok) {
-            msgEl.textContent = response.message || 'Password updated successfully.';
+            msgEl.textContent = response.message || 'password changed';
             form.reset();
         } else {
-            msgEl.textContent = response.message || 'Unable to update password.';
+            msgEl.textContent = response.message || 'password doesn\'t match';
+            msgEl.classList.add('form-message-error');
         }
     });
 }

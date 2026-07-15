@@ -142,7 +142,7 @@
                         </svg>
                     </div>
                     <h3>Reports</h3>
-                    <p>Generate performance and risk summaries.</p>
+                    <p>Display the updated performance and risk summaries.</p>
                 </div>
             </div>
 
@@ -173,11 +173,21 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="adminUserPassword">Password</label>
-                                <input type="password" id="adminUserPassword" required minlength="6" placeholder="Min. 6 characters">
+                                <div class="password-wrapper">
+                                    <input type="password" id="adminUserPassword" required minlength="6" placeholder="Min. 6 characters">
+                                    <button type="button" class="password-toggle" aria-label="Show password">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="adminUserConfirmPassword">Confirm Password</label>
-                                <input type="password" id="adminUserConfirmPassword" required minlength="6" placeholder="Re-enter password">
+                                <div class="password-wrapper">
+                                    <input type="password" id="adminUserConfirmPassword" required minlength="6" placeholder="Re-enter password">
+                                    <button type="button" class="password-toggle" aria-label="Show password">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <p id="adminCreateUserMessage" class="form-message"></p>

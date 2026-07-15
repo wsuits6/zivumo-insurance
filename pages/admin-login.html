@@ -62,7 +62,12 @@
                     <div class="form-message">Use your admin password to sign in.</div>
                     <div class="form-group">
                         <label for="adminPassword">Admin Password</label>
-                        <input type="password" id="adminPassword" name="password" placeholder="Admin password" required>
+                        <div class="password-wrapper">
+                            <input type="password" id="adminPassword" name="password" placeholder="Admin password" required>
+                            <button type="button" class="password-toggle" aria-label="Show password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Sign In</button>
                 </form>

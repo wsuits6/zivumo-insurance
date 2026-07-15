@@ -137,6 +137,43 @@
     color: var(--text-secondary);
 }
 
+/* === PASSWORD TOGGLE === */
+.password-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding-right: 3rem !important;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+    z-index: 1;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.password-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
 .form-options {
     display: flex;
     justify-content: space-between;

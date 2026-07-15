@@ -90,28 +90,38 @@
 
                         <div class="form-group">
                             <label for="password">Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Create a strong password"
-                                autocomplete="new-password"
-                                required
-                                minlength="8"
-                            >
+                            <div class="password-wrapper">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a strong password"
+                                    autocomplete="new-password"
+                                    required
+                                    minlength="8"
+                                >
+                                <button type="button" class="password-toggle" aria-label="Show password">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
                             <small class="form-hint">At least 8 characters with one symbol</small>
                         </div>
 
                         <div class="form-group">
                             <label for="confirmPassword">Confirm Password</label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                placeholder="Re-enter your password"
-                                autocomplete="new-password"
-                                required
-                            >
+                            <div class="password-wrapper">
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    placeholder="Re-enter your password"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                                <button type="button" class="password-toggle" aria-label="Show password">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="form-group">

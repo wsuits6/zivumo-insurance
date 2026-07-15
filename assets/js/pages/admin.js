@@ -76,6 +76,7 @@ function setupTabs() {
             }
 
             loadAdminDashboard();
+            refreshReportsIfOpen();
         });
     });
 }
@@ -85,6 +86,7 @@ async function handleArchiveUser(userId) {
     const res = await apiRequest(`/api/admin/users/${userId}/archive`, 'POST');
     if (res.ok) {
         await loadAdminDashboard();
+        refreshReportsIfOpen();
     } else {
         alert(res.message || 'Failed to archive user');
     }
@@ -94,6 +96,7 @@ async function handleRestoreUser(userId) {
     const res = await apiRequest(`/api/admin/users/${userId}/restore`, 'POST');
     if (res.ok) {
         await loadAdminDashboard();
+        refreshReportsIfOpen();
     } else {
         alert(res.message || 'Failed to restore user');
     }
@@ -106,6 +109,7 @@ function handleDeleteUser(userId, userName) {
             const res = await apiRequest(`/api/admin/users/${userId}/delete`, 'POST');
             if (res.ok) {
                 await loadAdminDashboard();
+                refreshReportsIfOpen();
             } else {
                 alert(res.message || 'Failed to delete user');
             }
@@ -117,6 +121,7 @@ async function handleArchivePolicy(policyId) {
     const res = await apiRequest(`/api/admin/policies/${policyId}/archive`, 'POST');
     if (res.ok) {
         await loadAdminDashboard();
+        refreshReportsIfOpen();
     } else {
         alert(res.message || 'Failed to archive policy');
     }
@@ -126,6 +131,7 @@ async function handleRestorePolicy(policyId) {
     const res = await apiRequest(`/api/admin/policies/${policyId}/restore`, 'POST');
     if (res.ok) {
         await loadAdminDashboard();
+        refreshReportsIfOpen();
     } else {
         alert(res.message || 'Failed to restore policy');
     }
@@ -138,6 +144,7 @@ function handleDeletePolicy(policyId, policyNumber) {
             const res = await apiRequest(`/api/admin/policies/${policyId}/delete`, 'POST');
             if (res.ok) {
                 await loadAdminDashboard();
+                refreshReportsIfOpen();
             } else {
                 alert(res.message || 'Failed to delete policy');
             }
@@ -358,7 +365,7 @@ function setupAdminActions() {
                 msgEl.classList.remove('form-message-error');
                 msgEl.textContent = 'Account created! Log in on the main site using the credentials you used to view your dashboard.';
                 userForm.reset();
-                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); }, 4000);
+                setTimeout(() => { closeModal('createUserModal'); loadAdminDashboard(); refreshReportsIfOpen(); }, 4000);
             } else {
                 msgEl.textContent = response.message || 'Error creating user.';
                 msgEl.classList.add('form-message-error');
@@ -408,7 +415,7 @@ function setupAdminActions() {
             if (response.ok) {
                 msgEl.textContent = 'Policy assigned successfully!';
                 policyForm.reset();
-                setTimeout(() => { closeModal('assignPolicyModal'); loadAdminDashboard(); }, 2000);
+                setTimeout(() => { closeModal('assignPolicyModal'); loadAdminDashboard(); refreshReportsIfOpen(); }, 2000);
             } else {
                 msgEl.textContent = response.message || 'Error assigning policy.';
             }
@@ -430,6 +437,17 @@ let _reportCharts = [];
 function destroyReportCharts() {
     _reportCharts.forEach((c) => { try { c.destroy(); } catch (_) {} });
     _reportCharts = [];
+}
+
+function isReportsModalOpen() {
+    const modal = document.getElementById('reportsModal');
+    return modal && modal.classList.contains('open');
+}
+
+function refreshReportsIfOpen() {
+    if (isReportsModalOpen()) {
+        loadReportsData();
+    }
 }
 
 function openReportsModal() {
