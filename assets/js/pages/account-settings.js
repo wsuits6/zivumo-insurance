@@ -1,45 +1,4 @@
-async function loadAccountSummaries() {
-    const paymentSummary = document.getElementById('paymentSummary');
-    const documentsSummary = document.getElementById('documentsSummary');
-    const invoicesSummary = document.getElementById('invoicesSummary');
-
-    const [paymentRes, documentsRes, invoicesRes] = await Promise.all([
-        apiRequest('/api/payment-methods', 'GET'),
-        apiRequest('/api/documents', 'GET'),
-        apiRequest('/api/invoices', 'GET')
-    ]);
-
-    if (paymentSummary) {
-        if (paymentRes.ok && paymentRes.data.length) {
-            const method = paymentRes.data[0];
-            paymentSummary.textContent = `${method.brand} ending in ${method.last4} · Expires ${method.expiry}`;
-        } else {
-            paymentSummary.textContent = 'No payment method on file.';
-        }
-    }
-
-    if (documentsSummary) {
-        if (documentsRes.ok && documentsRes.data.length) {
-            const latest = documentsRes.data
-                .slice()
-                .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            documentsSummary.textContent = `Latest document generated on ${AvesUtils.formatDate(latest.date)}`;
-        } else {
-            documentsSummary.textContent = 'No documents available.';
-        }
-    }
-
-    if (invoicesSummary) {
-        if (invoicesRes.ok && invoicesRes.data.length) {
-            const latest = invoicesRes.data
-                .slice()
-                .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            invoicesSummary.textContent = `Last invoice on ${AvesUtils.formatDate(latest.date)} · ${latest.status}`;
-        } else {
-            invoicesSummary.textContent = 'No invoices available.';
-        }
-    }
-}
+async function loadAccountSummaries() {}
 
 function initAccountSettings() {
     const settingsForm = document.getElementById('settingsForm');
