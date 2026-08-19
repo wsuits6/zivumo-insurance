@@ -75,9 +75,13 @@ function setupNewPolicy() {
     const newPolicyForm = document.getElementById('newPolicyForm');
     if (!newPolicyForm) return;
 
-    // Populate types and setup auto-fill
     const typeSelect = document.getElementById('policyType');
     const coverageText = document.getElementById('policyCoverage');
+    const policyStart = document.getElementById('policyStart');
+    const policyEnd = document.getElementById('policyEnd');
+    const policyPremium = document.getElementById('policyPremium');
+    const policyDurationHint = document.getElementById('policyDurationHint');
+    const rateInfoEl = document.getElementById('rateInfo');
 
     if (typeSelect && window.POLICY_TYPES) {
         for (const type in window.POLICY_TYPES) {
@@ -89,25 +93,55 @@ function setupNewPolicy() {
 
         typeSelect.addEventListener('change', () => {
             coverageText.value = window.POLICY_TYPES[typeSelect.value] || '';
+            updateRateInfo();
+            autoFillPremium();
         });
     }
 
-    const policyStart = document.getElementById('policyStart');
-    const policyEnd = document.getElementById('policyEnd');
-    const policyPremium = document.getElementById('policyPremium');
-    const policyDurationHint = document.getElementById('policyDurationHint');
+    function updateRateInfo() {
+        if (!rateInfoEl) return;
+        const config = window.POLICY_BASE_RATES && window.POLICY_BASE_RATES[typeSelect.value];
+        if (config) {
+            rateInfoEl.textContent = `Base rate: GHS ${config.rate.toFixed(2)} per ${config.unit}`;
+        } else {
+            rateInfoEl.textContent = '';
+        }
+    }
 
     function autoFillPremium() {
-        if (!policyStart.value || !policyEnd.value) return;
-        const years = calcPolicyPremium(policyStart.value, policyEnd.value);
-        if (years < 1) {
-            policyDurationHint.textContent = 'Minimum duration is 1 year. Please adjust your dates.';
+        if (!policyStart.value || !policyEnd.value || !typeSelect.value) {
+            policyPremium.value = '';
+            if (policyDurationHint) policyDurationHint.textContent = '';
+            return;
+        }
+
+        const total = window.calcPolicyTotalAmount
+            ? window.calcPolicyTotalAmount(typeSelect.value, policyStart.value, policyEnd.value)
+            : null;
+
+        if (total === null || total <= 0) {
+            policyDurationHint.textContent = 'Please select valid start and end dates.';
             policyDurationHint.style.color = 'var(--color-error, #dc3545)';
             policyPremium.value = '';
             return;
         }
-        policyDurationHint.textContent = '';
-        policyPremium.value = Math.round(years) * 100;
+
+        const config = window.POLICY_BASE_RATES[typeSelect.value];
+        const start = new Date(policyStart.value);
+        const end = new Date(policyEnd.value);
+        const diffMs = end - start;
+        let durationText;
+        if (config.unit === 'annual') {
+            const years = diffMs / (365.25 * 24 * 60 * 60 * 1000);
+            durationText = `${years.toFixed(2)} year(s)`;
+        } else {
+            const months = diffMs / (30.4375 * 24 * 60 * 60 * 1000);
+            durationText = `${months.toFixed(2)} month(s)`;
+        }
+
+        policyDurationHint.textContent = `Duration: ${durationText} x GHS ${config.rate.toFixed(2)} (${config.unit})`;
+        policyDurationHint.style.color = '';
+        policyPremium.value = total.toFixed(2);
     }
 
     policyStart.addEventListener('change', autoFillPremium);
@@ -115,19 +149,33 @@ function setupNewPolicy() {
 
     newPolicyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const years = calcPolicyPremium(policyStart.value, policyEnd.value);
         const messageEl = document.getElementById('newPolicyMessage');
-        if (years < 1) {
-            messageEl.textContent = 'You cannot acquire this policy. The minimum duration is 1 year.';
+        const total = window.calcPolicyTotalAmount
+            ? window.calcPolicyTotalAmount(typeSelect.value, policyStart.value, policyEnd.value)
+            : null;
+
+        if (!typeSelect.value) {
+            messageEl.textContent = 'Please select a policy type.';
             messageEl.classList.add('form-message-error');
             return;
         }
+        if (!policyStart.value || !policyEnd.value) {
+            messageEl.textContent = 'Please select start and end dates.';
+            messageEl.classList.add('form-message-error');
+            return;
+        }
+        if (total === null || total <= 0) {
+            messageEl.textContent = 'End date must be after start date.';
+            messageEl.classList.add('form-message-error');
+            return;
+        }
+
         const payload = {
             type: typeSelect.value,
             coverage: coverageText.value.trim(),
             startDate: policyStart.value,
             endDate: policyEnd.value,
-            premium: policyPremium.value,
+            premium: total.toFixed(2),
             currency: 'GHS'
         };
         const response = await apiRequest('/api/policies', 'POST', payload);
@@ -135,6 +183,8 @@ function setupNewPolicy() {
             messageEl.classList.remove('form-message-error');
             messageEl.textContent = response.message || 'Policy created.';
             newPolicyForm.reset();
+            if (rateInfoEl) rateInfoEl.textContent = '';
+            if (policyDurationHint) policyDurationHint.textContent = '';
         } else {
             messageEl.textContent = response.message || 'Unable to create policy.';
             messageEl.classList.add('form-message-error');

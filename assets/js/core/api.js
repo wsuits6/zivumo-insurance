@@ -7,8 +7,26 @@ const API_BASE = (function() {
     return '';
 })();
 
+function getAuthToken() {
+    return localStorage.getItem('aves_token');
+}
+
+function setAuthToken(token) {
+    if (token) {
+        localStorage.setItem('aves_token', token);
+    } else {
+        localStorage.removeItem('aves_token');
+    }
+}
+
 function apiRequest(path, method = 'GET', body = null) {
-    const options = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'include' };
+    const headers = { 'Content-Type': 'application/json' };
+    const token = getAuthToken();
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const options = { method, headers, credentials: 'include' };
     if (body) {
         options.body = JSON.stringify(body);
     }
@@ -18,13 +36,20 @@ function apiRequest(path, method = 'GET', body = null) {
             if (!response.ok && response.headers.get('content-type')?.includes('text/html')) {
                 return { ok: false, message: 'Server error. Please try again later.' };
             }
-            return response.json().then((data) => ({
-                ...data,
-                ok: typeof data.ok === 'boolean' ? data.ok : response.ok,
-                status: response.status
-            }));
+            return response.json().then((data) => {
+                if (data.token) {
+                    setAuthToken(data.token);
+                }
+                return {
+                    ...data,
+                    ok: typeof data.ok === 'boolean' ? data.ok : response.ok,
+                    status: response.status
+                };
+            });
         })
         .catch(() => ({ ok: false, message: 'Network error. Make sure the server is running on port 8000.' }));
 }
 
 window.apiRequest = apiRequest;
+window.setAuthToken = setAuthToken;
+window.getAuthToken = getAuthToken;

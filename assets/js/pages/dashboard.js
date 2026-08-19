@@ -60,7 +60,17 @@ async function loadDashboardData() {
         if (statsEl.total) statsEl.total.textContent = statsResponse.data.totalPolicies;
         if (statsEl.active) statsEl.active.textContent = statsResponse.data.activePolicies;
         if (statsEl.pending) statsEl.pending.textContent = statsResponse.data.pendingRenewals;
-        if (statsEl.notifications) statsEl.notifications.textContent = statsResponse.data.notifications;
+    }
+
+    const email = localStorage.getItem('aves_user_email');
+    if (email && statsEl.notifications && window.NotificationStore) {
+        statsEl.notifications.textContent = window.NotificationStore.getUnreadUserCount(email);
+    } else if (statsEl.notifications && statsResponse.ok) {
+        statsEl.notifications.textContent = statsResponse.data.notifications || 0;
+    }
+
+    if (window.updateUserNotificationBadge) {
+        window.updateUserNotificationBadge();
     }
 
     const policiesGrid = document.getElementById('policiesGrid');

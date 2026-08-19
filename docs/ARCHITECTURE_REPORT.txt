@@ -1,0 +1,393 @@
+================================================================================
+                        ARCHITECTURE REPORT
+                    Zivumo Insurance (Aves Insurance)
+================================================================================
+
+Project:        Aves Insurance Web Application
+Version:        1.0.0
+Description:    Insurance management platform (Express + static frontend)
+Copyright:      2026 Aves Insurance
+Tagline:        "Trust, Security, Protection"
+
+================================================================================
+1. TECH STACK
+================================================================================
+
+Layer               Technology                    Details
+------------------  ----------------------------  ----------------------------
+Frontend            Vanilla HTML/CSS/JS            No framework, multi-page app
+Backend             Express.js 4.19.2             Node.js REST API server
+Database            JSON file (in-memory)          backend/data/db.json
+Authentication      JWT (jsonwebtoken 9.0.2)       Bearer token in localStorage
+Password Hashing    bcryptjs 2.4.3                 Salt rounds: 10
+Security            Helmet 7.1.0                   HTTP security headers
+Charts              Chart.js 4.4.7                 CDN-loaded, admin dashboard
+Hosting             Vercel                         Serverless Node.js + static
+Fonts               Google Fonts                   Manrope + Space Grotesk
+
+================================================================================
+2. DIRECTORY STRUCTURE
+================================================================================
+
+zivumo-insurance/
+|
+|-- index.html                          Landing page (entry point)
+|-- package.json                        Project metadata and dependencies
+|-- vercel.json                         Vercel deployment configuration
+|-- .gitignore
+|
+|-- backend/
+|   |-- .env                            Environment variables (ADMIN_PASSWORD_SEED)
+|   |-- data/
+|   |   `-- db.json                     JSON seed database
+|   `-- src/
+|       |-- server.js                   Entry point (exports app, optional listen)
+|       |-- app.js                      Express app setup, middleware, routes
+|       |-- db.js                       In-memory JSON database manager
+|       |-- config/
+|       |   `-- env.js                  Custom .env file parser
+|       |-- middleware/
+|       |   `-- auth.js                 JWT auth middleware (requireAuth, requireAdmin)
+|       |-- routes/
+|       |   |-- auth.js                 User signup, login, logout, /me
+|       |   |-- admin.js                Admin login, CRUD users/policies, reports
+|       |   |-- policies.js             User policy CRUD, renewal
+|       |   |-- account.js              User account settings, password change
+|       |   `-- resources.js            Read-only: notifications, documents, etc.
+|       `-- utils/
+|           |-- validation.js           Email sanitization and validation
+|           `-- user.js                 pickUser() - strips passwordHash
+|
+|-- pages/                              18 static HTML pages
+|   |-- login.html                      User login
+|   |-- signup.html                     User registration
+|   |-- dashboard.html                  User dashboard
+|   |-- policies.html                   Policy list
+|   |-- policy-details.html             Single policy details
+|   |-- policy-renew.html               Policy renewal form
+|   |-- new-policy.html                 Create new policy
+|   |-- documents.html                  User documents
+|   |-- invoices.html                   User invoices
+
+|   |-- account-settings.html           Profile and preferences
+|   |-- password-update.html            Password change
+|   |-- mfa-settings.html               MFA settings (UI only)
+|   |-- sessions.html                   Sessions management (UI only)
+|   |-- help-center.html                Help center (static content)
+|   |-- contact-us.html                 Contact page (static content)
+|   |-- admin-login.html                Admin password-only login
+|   `-- admin-dashboard.html            Full admin panel with charts
+|
+`-- assets/
+    |-- css/
+    |   |-- base.css                    CSS variables, reset, icons
+    |   |-- layout.css                  Navbar, footer, layout primitives
+    |   |-- components.css              Buttons, forms, badges, cards
+    |   |-- responsive.css              Media queries (1024/900/768/520px)
+    |   `-- pages/
+    |       |-- landing.css             Landing page styles
+    |       |-- auth.css                Login/signup page styles
+    |       |-- app.css                 Dashboard, policies, settings, profile
+    |       `-- admin.css               Admin dashboard, tables, modals, reports
+    |-- js/
+    |   |-- bootstrap.js                Global DOMContentLoaded initializer
+    |   |-- core/
+    |   |   |-- api.js                  fetch wrapper (API_BASE, token mgmt)
+    |   |   |-- utils.js                Date/currency formatting, URL params
+    |   |   |-- theme.js                Dark/light theme toggle
+    |   |   |-- nav.js                  Mobile hamburger toggle
+    |   |   |-- smooth-scroll.js        Smooth scroll for anchor links
+    |   |   |-- animations.js           IntersectionObserver card animations
+    |   |   `-- policy-data.js          11 insurance policy type definitions
+    |   `-- pages/
+    |       |-- auth.js                 FormValidator class (login/signup)
+    |       |-- app-auth.js             AppAuth class (protected page guard)
+    |       |-- dashboard.js            Dashboard stat cards + policy cards
+    |       |-- policies.js             Policy list, details, renew, new form
+    |       |-- data.js                 Documents, invoices, payment methods
+    |       |-- account-settings.js     Profile settings, password, preferences
+    |       `-- admin.js                Admin login, dashboard, CRUD, reports
+    |-- images/
+    |   `-- logo.png                    Brand logo
+    `-- docs/
+        |-- health-policy-schedule.txt  Sample document
+        `-- auto-insurance-certificate.txt  Sample document
+
+================================================================================
+3. FRONTEND ARCHITECTURE
+================================================================================
+
+3.1 Application Model
+---------------------
+This is a Multi-Page Application (MPA). Each page is a standalone HTML file.
+Navigation between pages causes full page reloads. There is no client-side
+router.
+
+3.2 Page Categories
+--------------------
+Category              Pages                              Auth Required
+---------------------  ---------------------------------  ---------------
+Public/Landing         index.html                         No
+Auth                   login.html, signup.html            No
+User App               dashboard.html, policies.html,     Yes (JWT)
+                       policy-details.html,
+                       policy-renew.html, new-policy.html,
+                       documents.html, invoices.html,
+                       account-settings.html,
+                       password-update.html,
+                       mfa-settings.html, sessions.html
+Admin                  admin-login.html,                 Yes (admin JWT)
+                       admin-dashboard.html
+Support                help-center.html, contact-us.html  No
+
+3.3 Script Loading Strategy
+----------------------------
+Every page loads the full set of JavaScript files. The bootstrap.js file acts
+as a page dispatcher:
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Always run: theme, smooth-scroll, nav-toggle, animations
+        // Page-specific: checks window.location.pathname and calls
+        // the appropriate initializer function
+    });
+
+No code splitting or lazy loading. Each page script registers its init
+function on `window` and bootstrap.js calls it conditionally based on the
+current URL path.
+
+3.4 Frontend-to-Backend Communication
+--------------------------------------
+All API communication goes through a single apiRequest() function in
+assets/js/core/api.js:
+
+    function apiRequest(path, method = 'GET', body = null)
+
+Features:
+  - Automatically attaches JWT Bearer token from localStorage (key: aves_token)
+  - Auto-detects environment: if running on port 5500/5501/3000/8080 or
+    file:// protocol, targets http://127.0.0.1:8000; otherwise uses relative
+    paths for production
+  - Sends JSON with credentials: include
+  - Auto-stores tokens received in API responses
+  - Returns normalized response: { ok, message, data, status, token }
+
+3.5 State Management
+---------------------
+No centralized state management (no Redux, no context, no stores).
+
+  - Auth state:     localStorage.getItem('aves_token') (JWT)
+  - Theme state:    localStorage.getItem('theme')
+  - User data:      Fetched from API on page load, stored in local JS
+                    variables or directly inserted into DOM
+  - Server-side data is the source of truth; frontend fetches fresh data
+    on every page load
+
+3.6 CSS Architecture
+---------------------
+  - CSS Custom Properties for theming: light/dark mode via
+    [data-theme="dark"] selector
+  - Layered CSS: base.css -> layout.css -> components.css -> pages/*.css ->
+    responsive.css
+  - Full dark theme implementation with distinct color palettes
+  - Responsive breakpoints at 1024px, 900px, 768px, and 520px
+  - No CSS preprocessors (no Sass/LESS) -- pure CSS with custom properties
+  - No CSS framework (no Tailwind, Bootstrap) -- all custom
+
+================================================================================
+4. BACKEND ARCHITECTURE
+================================================================================
+
+4.1 Server Setup
+-----------------
+Request flow:
+
+    Request -> Helmet -> CORS -> JSON Parser -> Route Handler -> Response
+
+Middleware stack (in order):
+  1. helmet({ contentSecurityPolicy: false }) -- security headers
+  2. Custom CORS middleware -- dynamically sets Access-Control-Allow-Origin
+     to the request's origin
+  3. express.json({ limit: '150kb' }) -- body parser with 150KB limit
+  4. express.urlencoded({ extended: false }) -- URL-encoded body parser
+
+4.2 Database Layer (db.js)
+---------------------------
+  - In-memory JSON database: reads backend/data/db.json once at startup
+  - No persistence: all changes are lost on server restart
+  - In serverless (Vercel), each invocation starts fresh
+  - Simple auto-increment IDs: getNextId() finds max(id) + 1
+  - Singleton pattern: _db variable is populated once and reused
+
+4.3 API Routes
+---------------
+
+4.3.1 Auth Routes (/api/)
+Method    Endpoint        Auth    Description
+------    --------------  ------  --------------------------------
+POST      /signup         No      Create user account
+POST      /login          No      Authenticate user, return JWT
+POST      /logout         No      Server-side no-op
+GET       /me             Yes     Get current user profile
+
+4.3.2 User Routes (/api/)
+Method    Endpoint                   Auth    Description
+------    -------------------------  ------  ----------------------------
+GET       /stats                     Yes     Policy counts, notifications
+GET       /account                   Yes     Full account details
+POST      /account                   Yes     Update profile
+POST      /preferences               Yes     Update notification prefs
+POST      /account/password          Yes     Change password
+GET       /policies                  Yes     List user policies
+GET       /policies/:id              Yes     Get single policy
+POST      /policies                  Yes     Create new policy
+POST      /policies/:id/renew        Yes     Renew policy (extend 1 year)
+GET       /notifications             Yes     User notifications
+GET       /documents                 Yes     User documents
+GET       /invoices                  Yes     User invoices
+GET       /payment-methods           Yes     User payment methods
+
+4.3.3 Admin Routes (/api/admin/)
+Method    Endpoint                   Auth    Description
+------    -------------------------  ------  ----------------------------
+POST      /login                     No      Admin password-only auth
+POST      /logout                    No      Admin logout
+GET       /me                        Admin   Verify admin session
+GET       /summary                   Admin   Platform stats
+GET       /users                     Admin   List all users
+GET       /policies                  Admin   List all policies
+POST      /policies/:id/status       Admin   Update policy status
+POST      /users                     Admin   Create new user
+POST      /users/:id/delete          Admin   Hard delete user
+POST      /users/:id/archive         Admin   Archive user
+POST      /users/:id/restore         Admin   Restore archived user
+POST      /policies/:id/delete       Admin   Hard delete policy
+POST      /policies/:id/archive      Admin   Archive policy
+POST      /policies/:id/restore      Admin   Restore archived policy
+POST      /assign-policy             Admin   Assign policy to user
+GET       /reports/summary           Admin   Full analytics/charts data
+
+================================================================================
+5. DATA MODELS
+================================================================================
+
+The database (db.json) contains the following collections:
+
+Users:
+  - id, name, email, passwordHash, phone, address
+  - role (user/admin), status (active/archived)
+  - preferences (notifications object), createdAt
+
+Policies:
+  - id, userId, policyNumber, type, provider, status
+  - premium, coverageAmount, startDate, endDate
+  - description, details, progress, createdAt
+
+Notifications:
+  - id, userId, title, message, type, read, createdAt
+
+Documents:
+  - id, userId, name, type, size, uploadedAt
+
+Invoices:
+  - id, userId, invoiceNumber, amount, status, date, dueDate, policyId
+
+PaymentMethods:
+  - id, userId, type, last4, expiry, isDefault
+
+================================================================================
+6. AUTHENTICATION AND AUTHORIZATION
+================================================================================
+
+6.1 User Authentication
+------------------------
+  - Password hashed with bcryptjs (10 salt rounds)
+  - On login, server returns a JWT containing { id, email, role }
+  - Token stored in localStorage as 'aves_token'
+  - Every authenticated request sends: Authorization: Bearer <token>
+  - requireAuth middleware verifies JWT and attaches req.user
+
+6.2 Admin Authentication
+-------------------------
+  - Password-only login (no username/email required)
+  - Admin password verified against bcrypt hash of ADMIN_PASSWORD_SEED
+  - Separate JWT issued with admin role claim
+  - requireAdmin middleware checks both JWT validity and role === 'admin'
+
+6.3 Authorization Flow
+-----------------------
+  - Public pages: accessible without any token
+  - User pages: bootstrap.js calls AppAuth class which checks for valid
+    JWT in localStorage; redirects to login.html if missing/invalid
+  - Admin pages: requireAdmin middleware rejects non-admin tokens
+
+================================================================================
+7. DEPLOYMENT
+================================================================================
+
+Platform:           Vercel
+Project name:       aves-insurance-five
+Config file:        vercel.json
+
+Vercel Configuration:
+  - Backend (Express): deployed as serverless Node.js functions
+  - Frontend (static): served directly by Vercel's CDN
+  - API routes handled by serverless function
+  - Static files (pages, assets) served from the project root
+
+Environment Variables (via .env):
+  - ADMIN_PASSWORD_SEED: seed value for admin password hash
+  - PORT: server port (default 8000 for local development)
+
+Important Note:
+  - The in-memory JSON database means data is ephemeral on Vercel
+  - Each serverless function invocation starts with the seed data
+  - This is a demo/prototype setup; production would use a real database
+
+================================================================================
+8. KEY ARCHITECTURAL DECISIONS
+================================================================================
+
+1. Multi-Page Application over SPA:
+   Simpler setup, no build step required, each page is independently
+   cacheable. Trade-off: full page reloads on navigation.
+
+2. In-Memory JSON Database:
+   Zero external dependencies, simple to understand and develop with.
+   Trade-off: no data persistence across server restarts or serverless
+   invocations.
+
+3. Full Script Loading on Every Page:
+   No code splitting or lazy loading. Simple but means every page loads
+   all JavaScript regardless of what it needs. bootstrap.js conditionally
+   initializes only what the current page requires.
+
+4. Custom CSS over Framework:
+   Full control over styling with CSS custom properties. No framework
+   overhead. Trade-off: more CSS to maintain, no utility classes.
+
+5. Serverless Deployment:
+   Vercel handles scaling and hosting. Trade-off: the in-memory database
+   resets on cold starts, making this suitable only for demos/prototypes.
+
+6. Separate Admin and User Auth:
+   Different JWT tokens for admin and regular users. Admin uses
+   password-only authentication (no email/username required).
+
+================================================================================
+9. AREAS FOR IMPROVEMENT
+================================================================================
+
+- Persistent database (replace in-memory JSON with PostgreSQL/MongoDB)
+- Code splitting and lazy loading for frontend JavaScript
+- Input validation and rate limiting on API routes
+- Proper error logging and monitoring
+- HTTPS enforcement and CSP headers
+- Session management for multi-device support
+- MFA implementation (currently UI only)
+- API versioning
+- Unit and integration test coverage
+- CI/CD pipeline configuration
+
+================================================================================
+                          END OF REPORT
+================================================================================

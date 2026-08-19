@@ -48,10 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loadInvoicesPage();
     }
 
-    if (path.includes('payment-methods.html') && window.loadPaymentMethodsPage) {
-        loadPaymentMethodsPage();
-    }
-
     if (path.includes('admin-login.html') && window.setupAdminLogin) {
         setupAdminLogin();
     }
@@ -59,6 +55,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (path.includes('admin-dashboard.html') && window.loadAdminDashboard) {
         loadAdminDashboard();
         if (window.setupAdminActions) setupAdminActions();
+    }
+
+    if (path.includes('help-center.html') && window.setupHelpCenter) {
+        setupHelpCenter();
+    }
+
+    if (path.includes('user-notifications.html') && window.loadUserNotifications) {
+        loadUserNotifications();
+    }
+
+    if (path.includes('admin-notifications.html') && window.loadAdminNotifications) {
+        loadAdminNotifications();
     }
 });
 

@@ -1,0 +1,202 @@
+/* ===================================
+   NOTIFICATION PAGE STYLES
+   =================================== */
+
+/* Notification List */
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.notification-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    transition: var(--transition);
+    cursor: pointer;
+    position: relative;
+}
+
+.notification-item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-color);
+}
+
+.notification-item.unread {
+    border-left: 4px solid var(--primary-color);
+}
+
+.notification-item.unread .notification-title {
+    font-weight: 700;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
+}
+
+.notification-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.notification-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.notification-timestamp {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.unread-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+}
+
+.notification-preview {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notification-body {
+    display: none;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.notification-body.open {
+    display: block;
+}
+
+.notification-full-message {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    white-space: pre-wrap;
+}
+
+.notification-reply-box {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.notification-reply-box h4 {
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-xs);
+    color: var(--primary-color);
+}
+
+.notification-reply-box p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    white-space: pre-wrap;
+}
+
+.notification-reply-time {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.notification-reply-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.notification-reply-form textarea {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+}
+
+.notification-reply-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(11, 110, 110, 0.1);
+}
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--error-color);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.notification-badge:empty,
+.notification-badge[data-count="0"] {
+    display: none;
+}
+
+/* Notification action card on dashboard */
+.notification-action-card {
+    cursor: pointer;
+    position: relative;
+}
+
+/* Empty state */
+.notification-empty {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Page header with clear button */
+.page-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}

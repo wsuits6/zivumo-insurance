@@ -37,6 +37,8 @@ class FormValidator {
         const payload = { email: data.email, password: data.password };
         this.showMessage('Signing you in...', 'success');
 
+        localStorage.setItem('aves_user_email', data.email);
+
         apiRequest('/api/login', 'POST', payload)
             .then((response) => {
                 if (!response.ok) {

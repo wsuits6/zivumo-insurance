@@ -5,23 +5,19 @@ function createResourcesRouter() {
   const router = express.Router();
 
   router.get('/notifications', requireAuth, (req, res) => {
-    const items = req.db.notifications.filter((n) => n.userId === req.user.id);
-    res.json({ ok: true, data: items });
+    res.json({ ok: true, data: req.db.notifications.filter((n) => n.userId === req.user.id) });
   });
 
   router.get('/documents', requireAuth, (req, res) => {
-    const docs = req.db.documents.filter((d) => d.userId === req.user.id);
-    res.json({ ok: true, data: docs });
+    res.json({ ok: true, data: req.db.documents.filter((d) => d.userId === req.user.id) });
   });
 
   router.get('/invoices', requireAuth, (req, res) => {
-    const invoices = req.db.invoices.filter((i) => i.userId === req.user.id);
-    res.json({ ok: true, data: invoices });
+    res.json({ ok: true, data: req.db.invoices.filter((i) => i.userId === req.user.id) });
   });
 
   router.get('/payment-methods', requireAuth, (req, res) => {
-    const methods = req.db.paymentMethods.filter((m) => m.userId === req.user.id);
-    res.json({ ok: true, data: methods });
+    res.json({ ok: true, data: req.db.paymentMethods.filter((m) => m.userId === req.user.id) });
   });
 
   return router;

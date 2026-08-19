@@ -23,12 +23,15 @@ class AppAuth {
                 window.location.pathname.includes('new-policy.html') ||
                 window.location.pathname.includes('documents.html') ||
                 window.location.pathname.includes('invoices.html') ||
-                window.location.pathname.includes('payment-methods.html')) {
+                false) {
                 window.location.href = 'login.html';
             }
             return;
         }
         this.user = response.data;
+        if (this.user && this.user.email) {
+            localStorage.setItem('aves_user_email', this.user.email);
+        }
     }
 
     async loadUserData() {
@@ -60,6 +63,7 @@ class AppAuth {
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
+                setAuthToken(null);
                 apiRequest('/api/logout', 'POST')
                     .finally(() => {
                         window.location.href = '../index.html';
@@ -80,7 +84,7 @@ function initAppAuth() {
         'new-policy.html',
         'documents.html',
         'invoices.html',
-        'payment-methods.html',
+
         'sessions.html',
         'mfa-settings.html',
         'password-update.html',

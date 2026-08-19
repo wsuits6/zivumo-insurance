@@ -1,17 +1,20 @@
-const fs = require('fs/promises');
+const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, '..', 'data', 'db.json');
+const SEED_PATH = path.join(__dirname, '..', 'data', 'db.json');
 
-async function readDb() {
-  const raw = await fs.readFile(DB_PATH, 'utf-8');
-  return JSON.parse(raw);
-}
+let _db = null;
 
-async function writeDb(data) {
-  const tempPath = `${DB_PATH}.tmp`;
-  await fs.writeFile(tempPath, JSON.stringify(data, null, 2), 'utf-8');
-  await fs.rename(tempPath, DB_PATH);
+function getDb() {
+  if (!_db) {
+    try {
+      const raw = fs.readFileSync(SEED_PATH, 'utf-8');
+      _db = JSON.parse(raw);
+    } catch {
+      _db = { users: [], policies: [], notifications: [], documents: [], invoices: [], paymentMethods: [] };
+    }
+  }
+  return _db;
 }
 
 function getNextId(items) {
@@ -20,8 +23,6 @@ function getNextId(items) {
 }
 
 module.exports = {
-  readDb,
-  writeDb,
-  getNextId,
-  DB_PATH
+  getDb,
+  getNextId
 };

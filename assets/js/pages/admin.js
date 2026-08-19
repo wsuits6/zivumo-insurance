@@ -257,6 +257,7 @@ async function loadAdminDashboard() {
     const logoutBtn = document.getElementById('adminLogoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
+            setAuthToken(null);
             apiRequest('/api/admin/logout', 'POST').finally(() => {
                 window.location.href = 'admin-login.html';
             });
@@ -283,6 +284,10 @@ async function loadAdminDashboard() {
         if (policiesResponse.ok) {
             renderPoliciesTable(policiesResponse.data, currentPolicyFilter);
         }
+    }
+
+    if (window.updateAdminNotificationBadge) {
+        window.updateAdminNotificationBadge();
     }
 }
 

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/pages/app.css">
+    <link rel="stylesheet" href="../assets/css/pages/notifications.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,7 +124,8 @@
                             <p>Pending Renewals</p>
                         </div>
                     </div>
-                    <div class="stat-card">
+                    <a href="user-notifications.html" class="stat-card" style="text-decoration:none;color:inherit;position:relative;">
+                        <span class="notification-badge" id="userNotifBadge" style="display:none;"></span>
                         <div class="icon-wrap">
                             <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"></path>
@@ -134,7 +136,7 @@
                             <h3 id="notifications">--</h3>
                             <p>Notifications</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -188,6 +190,8 @@
 
     <script src="../assets/js/core/api.js"></script>
     <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/policy-data.js"></script>
+    <script src="../assets/js/core/notifications.js"></script>
     <script src="../assets/js/core/theme.js"></script>
     <script src="../assets/js/core/smooth-scroll.js"></script>
     <script src="../assets/js/core/nav.js"></script>

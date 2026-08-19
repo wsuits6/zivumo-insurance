@@ -1,11 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const { readDb, writeDb, getNextId } = require('../db');
+const { getDb, getNextId } = require('../db');
 const { sanitizeEmail, isValidEmail } = require('../utils/validation');
 const { pickUser } = require('../utils/user');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, signToken } = require('../middleware/auth');
 
-function createAuthRouter({ loginLimiter }) {
+function createAuthRouter() {
   const router = express.Router();
 
   router.post('/signup', async (req, res) => {
@@ -24,7 +24,7 @@ function createAuthRouter({ loginLimiter }) {
         return res.status(422).json({ ok: false, message: 'Password must be at least 8 characters' });
       }
 
-      const db = await readDb();
+      const db = getDb();
       const exists = db.users.find((u) => u.email === email);
       if (exists) {
         return res.status(409).json({ ok: false, message: 'Email already exists' });
@@ -38,15 +38,10 @@ function createAuthRouter({ loginLimiter }) {
         passwordHash,
         phone: '',
         address: '',
-        preferences: {
-          renewals: true,
-          claims: true,
-          announcements: false
-        }
+        preferences: { renewals: true, claims: true, announcements: false }
       };
 
       db.users.push(newUser);
-      await writeDb(db);
 
       return res.status(201).json({ ok: true, message: 'Account created' });
     } catch (err) {
@@ -55,7 +50,7 @@ function createAuthRouter({ loginLimiter }) {
     }
   });
 
-  router.post('/login', loginLimiter, async (req, res) => {
+  router.post('/login', async (req, res) => {
     const email = sanitizeEmail(req.body.email);
     const password = String(req.body.password || '');
 
@@ -63,7 +58,7 @@ function createAuthRouter({ loginLimiter }) {
       return res.status(422).json({ ok: false, message: 'Email and password are required' });
     }
 
-    const db = await readDb();
+    const db = getDb();
     const user = db.users.find((u) => u.email === email);
     if (!user) {
       return res.status(401).json({ ok: false, message: 'Invalid credentials' });
@@ -74,14 +69,12 @@ function createAuthRouter({ loginLimiter }) {
       return res.status(401).json({ ok: false, message: 'Invalid credentials' });
     }
 
-    req.session.userId = user.id;
-    return res.json({ ok: true, data: pickUser(user) });
+    const token = signToken({ userId: user.id, role: 'user' });
+    return res.json({ ok: true, data: pickUser(user), token });
   });
 
-  router.post('/logout', (req, res) => {
-    req.session.destroy(() => {
-      res.json({ ok: true, message: 'Logged out' });
-    });
+  router.post('/logout', (_req, res) => {
+    return res.json({ ok: true, message: 'Logged out' });
   });
 
   router.get('/me', requireAuth, (req, res) => {

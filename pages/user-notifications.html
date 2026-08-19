@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Policy - Aves Insurance</title>
+    <title>Notifications - Aves Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/base.css">
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/pages/app.css">
+    <link rel="stylesheet" href="../assets/css/pages/notifications.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar dashboard-navbar">
         <div class="container">
             <div class="nav-content">
                 <div class="logo">
@@ -30,6 +31,7 @@
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-link">Dashboard</a>
                     <a href="policies.html" class="nav-link">My Policies</a>
+                    <a href="user-notifications.html" class="nav-link active">Notifications</a>
                     <a href="account-settings.html" class="nav-link">Account Settings</a>
                     <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
                 </div>
@@ -54,39 +56,12 @@
     <section class="settings-section">
         <div class="container">
             <div class="section-title">
-                <h2>Add New Policy</h2>
-                <p class="form-hint">Provide policy details to add coverage to your account.</p>
+                <div class="page-actions">
+                    <h2>Notifications <span class="badge badge-error" id="userNotifBadge" style="display:none;"></span></h2>
+                    <button class="btn btn-alert btn-sm" id="clearUserNotifications">Clear Messages</button>
+                </div>
             </div>
-            <div class="settings-card">
-                <form id="newPolicyForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="policyType">Policy Type</label>
-                        <select id="policyType" required>
-                            <option value="" disabled selected>Select a policy type</option>
-                        </select>
-                        <small class="form-hint" id="rateInfo"></small>
-                    </div>
-                    <div class="form-group">
-                        <label for="policyCoverage">Coverage Details</label>
-                        <textarea id="policyCoverage" required rows="4" placeholder="Select a policy type to auto-fill details..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="policyStart">Start Date</label>
-                        <input type="date" id="policyStart" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="policyEnd">End Date</label>
-                        <input type="date" id="policyEnd" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="policyPremium">Total Amount (GHS)</label>
-                        <input type="number" id="policyPremium" step="0.01" readonly required>
-                        <small class="form-hint" id="policyDurationHint"></small>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Create Policy</button>
-                    <p id="newPolicyMessage" class="form-message"></p>
-                </form>
-            </div>
+            <div class="notification-list" id="userNotificationList"></div>
         </div>
     </section>
 
@@ -125,6 +100,7 @@
     <script src="../assets/js/core/api.js"></script>
     <script src="../assets/js/core/utils.js"></script>
     <script src="../assets/js/core/policy-data.js"></script>
+    <script src="../assets/js/core/notifications.js"></script>
     <script src="../assets/js/core/theme.js"></script>
     <script src="../assets/js/core/smooth-scroll.js"></script>
     <script src="../assets/js/core/nav.js"></script>
@@ -136,6 +112,7 @@
     <script src="../assets/js/pages/data.js"></script>
     <script src="../assets/js/pages/account-settings.js"></script>
     <script src="../assets/js/pages/admin.js"></script>
+    <script src="../assets/js/pages/user-notifications.js"></script>
     <script src="../assets/js/bootstrap.js"></script>
 </body>
 </html>
