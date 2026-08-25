@@ -24,7 +24,6 @@ class AppAuth {
                 window.location.pathname.includes('documents.html') ||
                 window.location.pathname.includes('invoices.html') ||
                 window.location.pathname.includes('payments-methods.html') ||
-                window.location.pathname.includes('complaints.html') ||
                 window.location.pathname.includes('payment-callback.html') ||
                 false) {
                 window.location.href = 'login.html';
@@ -91,7 +90,6 @@ function initAppAuth() {
         'documents.html',
         'invoices.html',
         'payments-methods.html',
-        'complaints.html',
         'payment-callback.html',
 
         'sessions.html',

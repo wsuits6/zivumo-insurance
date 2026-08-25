@@ -28,7 +28,11 @@
                         </div>
                     </a>
                 </div>
-                <div class="nav-links">
+                <div class="nav-links" id="complaintsNavLinks">
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="signup.html" class="nav-link">Sign Up</a>
+                </div>
+                <div class="nav-links" id="complaintsAuthNavLinks" style="display:none;">
                     <a href="dashboard.html" class="nav-link">Dashboard</a>
                     <a href="policies.html" class="nav-link">My Policies</a>
                     <a href="user-notifications.html" class="nav-link">Notifications</a>
@@ -57,13 +61,23 @@
     <section class="settings-section">
         <div class="container">
             <div class="section-title">
-                <h2>My Complaints</h2>
+                <h2 id="complaintsTitle">My Complaints</h2>
             </div>
 
             <div class="settings-card" data-tour-target="complaints">
                 <h3>File a Complaint</h3>
                 <p class="form-hint">Describe your issue and our support team will respond here.</p>
                 <form id="complaintForm" class="auth-form">
+                    <div id="guestFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="complaintName">Your Name</label>
+                            <input type="text" id="complaintName" maxlength="100" placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="complaintEmail">Your Email</label>
+                            <input type="email" id="complaintEmail" maxlength="254" placeholder="Enter your email address">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="complaintSubject">Subject</label>
                         <input type="text" id="complaintSubject" maxlength="150" required placeholder="Brief summary of your complaint">

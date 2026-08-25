@@ -405,6 +405,11 @@
 /* === COMPLAINTS CHAT (ADMIN VIEW - MIRRORED) === */
 .chat-thread {
     max-height: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    overflow-y: auto;
 }
 
 .chat-thread--modal {

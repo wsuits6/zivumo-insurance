@@ -54,4 +54,24 @@ function requireAdmin(req, res, next) {
   }
 }
 
-module.exports = { requireAuth, requireAdmin, signToken, verifyToken };
+function optionalAuth(req, res, next) {
+  const token = extractToken(req);
+  if (!token) {
+    req.db = getDb();
+    return next();
+  }
+  try {
+    const decoded = verifyToken(token);
+    const db = getDb();
+    const user = db.users.find((u) => u.id === decoded.userId);
+    if (user) {
+      req.user = user;
+    }
+    req.db = db;
+  } catch {
+    req.db = getDb();
+  }
+  return next();
+}
+
+module.exports = { requireAuth, requireAdmin, optionalAuth, signToken, verifyToken };

@@ -159,15 +159,16 @@ window.handleArchivePolicy = handleArchivePolicy;
 window.handleRestorePolicy = handleRestorePolicy;
 window.handleDeletePolicy = handleDeletePolicy;
 
-/* ---------- Complaints (dashboard section) ---------- */
-let dashboardComplaints = [];
-let activeDashboardComplaintId = null;
-
-function complaintEscape(str) {
+/* ---------- HTML escape helper ---------- */
+function escapeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str == null ? '' : String(str);
     return div.innerHTML;
 }
+
+/* ---------- Complaints (dashboard section) ---------- */
+let dashboardComplaints = [];
+let activeDashboardComplaintId = null;
 
 function complaintStatusPill(status) {
     const badgeClass = status === 'resolved' ? 'badge-success' : status === 'in-progress' ? 'badge-error' : 'badge-warning';
@@ -200,9 +201,9 @@ function renderComplaintsTable() {
     tbody.innerHTML = dashboardComplaints.map((c) => `
         <tr>
             <td>#${c.id}</td>
-            <td>${complaintEscape(c.subject)}</td>
-            <td>${complaintEscape(c.userName)}</td>
-            <td>${complaintEscape(c.userEmail)}</td>
+            <td>${escapeHtml(c.subject)}</td>
+            <td>${escapeHtml(c.userName)}</td>
+            <td>${escapeHtml(c.userEmail)}</td>
             <td>${complaintStatusPill(c.status)}</td>
             <td>${c.replies.length}</td>
             <td>${AvesUtils.formatDate(c.createdAt)}</td>
@@ -230,16 +231,17 @@ function buildDashboardBubbles(complaint) {
 
     bubbles.push(`
         <div class="chat-bubble chat-bubble-user">
-            <div class="chat-meta">${complaintEscape(complaint.userName || 'User')} &middot; ${AvesUtils.formatDate(complaint.createdAt)}</div>
-            <div class="chat-message">${complaintEscape(complaint.description)}</div>
+            <div class="chat-meta">${escapeHtml(complaint.userName || 'User')} &middot; ${AvesUtils.formatDate(complaint.createdAt)}</div>
+            <div class="chat-message">${escapeHtml(complaint.description)}</div>
         </div>
     `);
 
     complaint.replies.forEach((reply) => {
+        const isAdmin = reply.sender === 'admin';
         bubbles.push(`
-            <div class="chat-bubble chat-bubble-admin">
-                <div class="chat-meta">You (Admin) &middot; ${new Date(reply.timestamp).toLocaleString()}</div>
-                <div class="chat-message">${complaintEscape(reply.message)}</div>
+            <div class="chat-bubble ${isAdmin ? 'chat-bubble-admin' : 'chat-bubble-user'}">
+                <div class="chat-meta">${isAdmin ? 'You (Admin)' : escapeHtml(complaint.userName || 'User')} &middot; ${new Date(reply.timestamp).toLocaleString()}</div>
+                <div class="chat-message">${escapeHtml(reply.message)}</div>
             </div>
         `);
     });
@@ -359,12 +361,12 @@ function renderPurchasesTable(purchases) {
     tbody.innerHTML = purchases.map((p) => `
         <tr>
             <td>#${p.id}</td>
-            <td>${complaintEscape(p.userName)}</td>
-            <td>${complaintEscape(p.userEmail)}</td>
-            <td>${complaintEscape(p.draft.type)}</td>
+            <td>${escapeHtml(p.userName)}</td>
+            <td>${escapeHtml(p.userEmail)}</td>
+            <td>${escapeHtml(p.draft.type)}</td>
             <td>${AvesUtils.formatCurrency(p.amount)}</td>
-            <td>${PURCHASE_METHOD_LABELS[p.method] || complaintEscape(p.method)}</td>
-            <td>${complaintEscape(p.reference)}</td>
+            <td>${PURCHASE_METHOD_LABELS[p.method] || escapeHtml(p.method)}</td>
+            <td>${escapeHtml(p.reference)}</td>
             <td>${AvesUtils.formatDate(p.createdAt)}</td>
             <td>
                 <button class="btn btn-sm btn-primary" onclick="handleApprovePurchase(${p.id})">Approve</button>

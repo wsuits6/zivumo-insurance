@@ -1,4 +1,38 @@
 let adminComplaints = [];
+const ADMIN_COMPLAINTS_READ_KEY = 'aves_admin_complaints_read';
+
+function getReadComplaintIds() {
+    try {
+        return JSON.parse(localStorage.getItem(ADMIN_COMPLAINTS_READ_KEY)) || [];
+    } catch (_) {
+        return [];
+    }
+}
+
+function markComplaintAsRead(id) {
+    const read = getReadComplaintIds();
+    if (read.indexOf(id) === -1) {
+        read.push(id);
+        localStorage.setItem(ADMIN_COMPLAINTS_READ_KEY, JSON.stringify(read.slice(-500)));
+    }
+}
+
+function isComplaintUnread(id) {
+    return getReadComplaintIds().indexOf(id) === -1;
+}
+
+function getUnreadComplaintCount() {
+    return adminComplaints.filter((c) => isComplaintUnread(c.id)).length;
+}
+
+function updateAdminComplaintBadge() {
+    const badge = document.getElementById('adminComplaintBadge');
+    if (!badge) return;
+    const count = getUnreadComplaintCount();
+    badge.textContent = count > 0 ? count : '';
+    badge.setAttribute('data-count', count);
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
 
 function loadAdminComplaintsPage() {
     const listEl = document.getElementById('adminComplaintList');
@@ -30,29 +64,43 @@ function renderAdminComplaints() {
 
     if (adminComplaints.length === 0) {
         listEl.innerHTML = '<div class="notification-empty">No complaints have been filed yet.</div>';
+        updateAdminComplaintBadge();
         return;
     }
 
-    listEl.innerHTML = adminComplaints.map((c) => `
-        <div class="notification-item" data-id="${c.id}">
-            <div class="notification-header">
-                <div class="notification-meta">
-                    <div class="notification-title">${escapeHtml(c.subject)} ${statusBadge(c.status)}</div>
-                    <div class="notification-subtitle">${escapeHtml(c.userName)} &middot; ${escapeHtml(c.userEmail)} &middot; ${formatTimestamp(c.createdAt)}</div>
+    listEl.innerHTML = adminComplaints.map((c) => {
+        const unread = isComplaintUnread(c.id);
+        const lastReply = c.replies.length > 0 ? c.replies[c.replies.length - 1] : null;
+        const preview = lastReply
+            ? (lastReply.sender === 'admin' ? 'You: ' : c.userName + ': ') + escapeHtml(lastReply.message.substring(0, 80)) + (lastReply.message.length > 80 ? '...' : '')
+            : escapeHtml(c.description.substring(0, 80)) + (c.description.length > 80 ? '...' : '');
+        return `
+            <div class="notification-item ${unread ? 'unread' : ''}" data-id="${c.id}">
+                <div class="notification-header">
+                    <div class="notification-meta">
+                        <div class="notification-title">
+                            ${escapeHtml(c.subject)} ${statusBadge(c.status)}
+                            ${unread ? '<span class="unread-dot"></span>' : ''}
+                        </div>
+                        <div class="notification-subtitle">${escapeHtml(c.userName)} &middot; ${escapeHtml(c.userEmail)}</div>
+                    </div>
+                    <div class="notification-timestamp">${formatTimestamp(c.createdAt)}</div>
                 </div>
-                <div class="notification-timestamp">${c.replies.length > 0 ? c.replies.length + ' repl' + (c.replies.length === 1 ? 'y' : 'ies') : 'No replies yet'}</div>
+                <div class="notification-preview">${preview}</div>
+                <div class="chat-thread" id="adminComplaintThread-${c.id}" style="display:none;"></div>
             </div>
-            <div class="chat-thread" id="adminComplaintThread-${c.id}" style="display:none;"></div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     listEl.querySelectorAll('.notification-item').forEach((el) => {
         el.addEventListener('click', (e) => {
-            if (e.target.closest('.chat-reply-form')) return;
+            if (e.target.closest('.chat-reply-form') || e.target.closest('button')) return;
             const id = parseInt(el.getAttribute('data-id'), 10);
             toggleAdminComplaintThread(id);
         });
     });
+
+    updateAdminComplaintBadge();
 }
 
 function toggleAdminComplaintThread(id) {
@@ -77,6 +125,17 @@ function toggleAdminComplaintThread(id) {
     renderAdminThread(complaint);
     thread.classList.add('open');
     thread.style.display = 'flex';
+
+    if (isComplaintUnread(id)) {
+        markComplaintAsRead(id);
+        const item = document.querySelector(`#adminComplaintList .notification-item[data-id="${id}"]`);
+        if (item) {
+            item.classList.remove('unread');
+            const dot = item.querySelector('.unread-dot');
+            if (dot) dot.remove();
+        }
+        updateAdminComplaintBadge();
+    }
 }
 
 function renderAdminThread(complaint) {
@@ -89,6 +148,7 @@ function renderAdminThread(complaint) {
 
     thread.innerHTML = `
         ${buildAdminBubbles(complaint)}
+        ${complaint.status !== 'resolved' ? `
         <form class="chat-reply-form" data-id="${complaint.id}">
             <textarea class="chat-reply-input" placeholder="Write a reply to ${escapeHtml(complaint.userName)}..." maxlength="5000" required></textarea>
             <div class="chat-reply-actions">
@@ -97,13 +157,16 @@ function renderAdminThread(complaint) {
             </div>
             <p class="chat-reply-message"></p>
         </form>
+        ` : '<div class="chat-waiting">This complaint has been resolved.</div>'}
     `;
 
     const form = thread.querySelector('.chat-reply-form');
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await sendAdminComplaintReply(complaint.id, form);
-    });
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await sendAdminComplaintReply(complaint.id, form);
+        });
+    }
 
     thread.scrollTop = thread.scrollHeight;
 }
@@ -180,9 +243,10 @@ function buildAdminBubbles(complaint) {
     `);
 
     complaint.replies.forEach((reply) => {
+        const isAdmin = reply.sender === 'admin';
         bubbles.push(`
-            <div class="chat-bubble chat-bubble-admin">
-                <div class="chat-meta">You (Admin) &middot; ${formatTimestamp(reply.timestamp)}</div>
+            <div class="chat-bubble ${isAdmin ? 'chat-bubble-admin' : 'chat-bubble-user'}">
+                <div class="chat-meta">${isAdmin ? 'You (Admin)' : escapeHtml(complaint.userName || 'User')} &middot; ${formatTimestamp(reply.timestamp)}</div>
                 <div class="chat-message">${escapeHtml(reply.message)}</div>
             </div>
         `);
@@ -232,3 +296,4 @@ function escapeHtml(str) {
 
 window.loadAdminComplaintsPage = loadAdminComplaintsPage;
 window.markComplaintResolved = markComplaintResolved;
+window.updateAdminComplaintBadge = updateAdminComplaintBadge;

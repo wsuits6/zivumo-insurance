@@ -69,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.includes('user-notifications.html') && window.loadUserNotifications) {
         loadUserNotifications();
+    } else if (window.syncServerNotifications && window.updateUserNotificationBadge) {
+        window.syncServerNotifications().then(() => {
+            window.updateUserNotificationBadge();
+        });
     }
 
     if (path.includes('admin-notifications.html') && window.loadAdminNotifications) {

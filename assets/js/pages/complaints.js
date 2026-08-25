@@ -1,19 +1,73 @@
 let userComplaints = [];
+let isComplaintsAuthenticated = false;
 
 function loadUserComplaintsPage() {
     const listEl = document.getElementById('complaintList');
     if (!listEl) return;
 
+    checkComplaintsAuth();
     setupComplaintForm();
+}
+
+async function checkComplaintsAuth() {
+    const guestFields = document.getElementById('guestFields');
+    const guestNav = document.getElementById('complaintsNavLinks');
+    const authNav = document.getElementById('complaintsAuthNavLinks');
+    const title = document.getElementById('complaintsTitle');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const response = await apiRequest('/api/me', 'GET');
+
+    if (response.ok) {
+        isComplaintsAuthenticated = true;
+        if (guestFields) guestFields.style.display = 'none';
+        if (guestNav) guestNav.style.display = 'none';
+        if (authNav) authNav.style.display = 'flex';
+        if (title) title.textContent = 'My Complaints';
+        const nameInput = document.getElementById('complaintName');
+        const emailInput = document.getElementById('complaintEmail');
+        if (nameInput) nameInput.removeAttribute('required');
+        if (emailInput) emailInput.removeAttribute('required');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                setAuthToken(null);
+                apiRequest('/api/logout', 'POST').finally(() => {
+                    window.location.href = '../index.html';
+                });
+            });
+        }
+    } else {
+        isComplaintsAuthenticated = false;
+        if (guestFields) guestFields.style.display = 'block';
+        if (guestNav) guestNav.style.display = 'flex';
+        if (authNav) authNav.style.display = 'none';
+        if (title) title.textContent = 'File a Complaint';
+        const nameInput = document.getElementById('complaintName');
+        const emailInput = document.getElementById('complaintEmail');
+        if (nameInput) nameInput.setAttribute('required', '');
+        if (emailInput) emailInput.setAttribute('required', '');
+    }
+
     refreshUserComplaints();
 }
 
 async function refreshUserComplaints() {
     const listEl = document.getElementById('complaintList');
 
-    const response = await apiRequest('/api/complaints', 'GET');
+    let url = '/api/complaints';
+    if (!isComplaintsAuthenticated) {
+        const emailInput = document.getElementById('complaintEmail');
+        const email = emailInput ? emailInput.value.trim() : '';
+        if (email) {
+            url += '?email=' + encodeURIComponent(email);
+        } else {
+            listEl.innerHTML = '<div class="notification-empty">Enter your email above and submit a complaint to track it here, or <a href="login.html">log in</a> to see your complaint history.</div>';
+            return;
+        }
+    }
+
+    const response = await apiRequest(url, 'GET');
     if (!response.ok) {
-        listEl.innerHTML = '<div class="notification-empty">' + escapeHtml(response.message || 'Please log in to view your complaints.') + '</div>';
+        listEl.innerHTML = '<div class="notification-empty">' + escapeHtml(response.message || 'Failed to load complaints.') + '</div>';
         return;
     }
 
@@ -73,6 +127,14 @@ function toggleUserComplaintThread(id) {
     thread.classList.add('open');
     thread.style.display = 'flex';
     thread.scrollTop = thread.scrollHeight;
+
+    const form = thread.querySelector('.chat-reply-form');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await sendUserComplaintReply(complaint.id, form);
+        });
+    }
 }
 
 function buildChatThread(complaint, isAdminView) {
@@ -86,9 +148,10 @@ function buildChatThread(complaint, isAdminView) {
     `);
 
     complaint.replies.forEach((reply) => {
+        const isAdmin = reply.sender === 'admin';
         bubbles.push(`
-            <div class="chat-bubble chat-bubble-admin">
-                <div class="chat-meta">Support Team &middot; ${formatTimestamp(reply.timestamp)}</div>
+            <div class="chat-bubble ${isAdmin ? 'chat-bubble-admin' : 'chat-bubble-user'}">
+                <div class="chat-meta">${isAdmin ? 'Support Team' : 'You'} &middot; ${formatTimestamp(reply.timestamp)}</div>
                 <div class="chat-message">${escapeHtml(reply.message)}</div>
             </div>
         `);
@@ -98,7 +161,64 @@ function buildChatThread(complaint, isAdminView) {
         bubbles.push('<div class="chat-waiting">Waiting for a reply from our support team...</div>');
     }
 
+    if (!isAdminView && complaint.status !== 'resolved') {
+        bubbles.push(`
+            <form class="chat-reply-form">
+                <textarea class="chat-reply-input" placeholder="Write a reply to support..." maxlength="5000" required></textarea>
+                <div class="chat-reply-actions">
+                    <button type="submit" class="btn btn-primary btn-sm">Send Reply</button>
+                </div>
+                <p class="chat-reply-message"></p>
+            </form>
+        `);
+    }
+
+    if (!isAdminView && complaint.status === 'resolved') {
+        bubbles.push('<div class="chat-waiting">This complaint has been resolved.</div>');
+    }
+
     return bubbles.join('');
+}
+
+async function sendUserComplaintReply(complaintId, form) {
+    const input = form.querySelector('.chat-reply-input');
+    const messageEl = form.querySelector('.chat-reply-message');
+
+    messageEl.textContent = '';
+    messageEl.classList.remove('form-message-error');
+
+    const message = input.value.trim();
+    if (!message) {
+        messageEl.textContent = 'Please write a reply first.';
+        messageEl.classList.add('form-message-error');
+        return;
+    }
+
+    const email = localStorage.getItem('aves_user_email');
+    const response = await apiRequest(`/api/complaints/${complaintId}/reply`, 'POST', { message, email });
+    if (!response.ok) {
+        messageEl.textContent = response.message || 'Failed to send reply.';
+        messageEl.classList.add('form-message-error');
+        return;
+    }
+
+    const index = userComplaints.findIndex((c) => c.id === complaintId);
+    if (index !== -1) {
+        userComplaints[index] = response.data;
+    }
+
+    const thread = document.getElementById(`userComplaintThread-${complaintId}`);
+    if (thread) {
+        thread.innerHTML = buildChatThread(response.data, false);
+        thread.scrollTop = thread.scrollHeight;
+        const newForm = thread.querySelector('.chat-reply-form');
+        if (newForm) {
+            newForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await sendUserComplaintReply(complaintId, newForm);
+            });
+        }
+    }
 }
 
 function statusBadge(status) {
@@ -127,7 +247,21 @@ function setupComplaintForm() {
             return;
         }
 
-        const response = await apiRequest('/api/complaints', 'POST', { subject, description });
+        const payload = { subject, description };
+
+        if (!isComplaintsAuthenticated) {
+            const name = document.getElementById('complaintName').value.trim();
+            const email = document.getElementById('complaintEmail').value.trim();
+            if (!name || !email) {
+                messageEl.textContent = 'Please enter your name and email.';
+                messageEl.classList.add('form-message-error');
+                return;
+            }
+            payload.name = name;
+            payload.email = email;
+        }
+
+        const response = await apiRequest('/api/complaints', 'POST', payload);
         if (!response.ok) {
             messageEl.textContent = response.message || 'Failed to submit complaint.';
             messageEl.classList.add('form-message-error');

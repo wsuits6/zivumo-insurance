@@ -40,7 +40,40 @@ const NotificationStore = {
         return notification;
     },
 
-    /* One-way announcement from the platform (e.g. purchase confirmation) */
+    createComplaintReplyNotification(email, subject, complaintId, replyText, replyTimestamp) {
+        const items = this._read();
+        const existing = items.find(
+            (n) => n.complaintId === complaintId && n.type === 'complaint_reply'
+        );
+        if (existing) {
+            existing.reply = replyText;
+            existing.replyTimestamp = replyTimestamp;
+            existing.message = subject;
+            existing.userRead = false;
+            existing.unreadCount = (existing.unreadCount || 0) + 1;
+            this._write(items);
+            return existing;
+        }
+        const notification = {
+            id: this._nextId(items),
+            username: 'Aves Admin',
+            email,
+            policyType: 'Complaint: ' + subject,
+            message: subject,
+            timestamp: replyTimestamp || new Date().toISOString(),
+            adminRead: true,
+            userRead: false,
+            reply: replyText,
+            replyTimestamp: replyTimestamp || new Date().toISOString(),
+            type: 'complaint_reply',
+            complaintId,
+            unreadCount: 1
+        };
+        items.unshift(notification);
+        this._write(items);
+        return notification;
+    },
+
     createSystemMessage(email, title, message) {
         const items = this._read();
         const notification = {
@@ -79,6 +112,19 @@ const NotificationStore = {
         return this._read().filter((n) => n.email === email && n.reply && !n.userRead).length;
     },
 
+    getTotalUnreadMessages(email) {
+        const items = this._read().filter((n) => n.email === email);
+        let count = 0;
+        items.forEach((n) => {
+            if (n.type === 'complaint_reply') {
+                if (!n.userRead) count += (n.unreadCount || 1);
+            } else if (n.reply && !n.userRead) {
+                count += 1;
+            }
+        });
+        return count;
+    },
+
     markAdminRead(id) {
         const items = this._read();
         const item = items.find((n) => n.id === id);
@@ -93,6 +139,7 @@ const NotificationStore = {
         const item = items.find((n) => n.id === id);
         if (item) {
             item.userRead = true;
+            item.unreadCount = 0;
             this._write(items);
         }
     },
@@ -165,21 +212,38 @@ async function syncServerNotifications() {
     const seen = getSeenServerNotifIds();
     const titles = {
         renewal: 'Policy Renewed',
-        purchase: 'Policy Approved'
+        purchase: 'Policy Approved',
+        complaint_reply: 'Complaint Reply'
     };
 
+    let changed = false;
     response.data.forEach((n) => {
         const key = 'srv-' + n.id;
         if (seen.indexOf(key) !== -1) return;
-        window.NotificationStore.createSystemMessage(
-            email,
-            titles[n.type] || 'Aves Admin',
-            n.message
-        );
+        if (n.type === 'complaint_reply' && n.complaintId) {
+            window.NotificationStore.createComplaintReplyNotification(
+                email,
+                n.subject || 'Complaint',
+                n.complaintId,
+                n.replyText || n.message,
+                n.replyTimestamp || n.date
+            );
+        } else {
+            window.NotificationStore.createSystemMessage(
+                email,
+                titles[n.type] || 'Aves Admin',
+                n.message
+            );
+        }
         seen.push(key);
+        changed = true;
     });
 
     localStorage.setItem(SERVER_NOTIF_SEEN_KEY, JSON.stringify(seen.slice(-500)));
+
+    if (changed && window.updateUserNotificationBadge) {
+        window.updateUserNotificationBadge();
+    }
 }
 
 window.syncServerNotifications = syncServerNotifications;
@@ -192,7 +256,7 @@ function updateUserNotificationBadge() {
         badge.style.display = 'none';
         return;
     }
-    const count = window.NotificationStore.getUnreadUserCount(email);
+    const count = window.NotificationStore.getTotalUnreadMessages(email);
     badge.textContent = count > 0 ? count : '';
     badge.setAttribute('data-count', count);
     badge.style.display = count > 0 ? 'flex' : 'none';

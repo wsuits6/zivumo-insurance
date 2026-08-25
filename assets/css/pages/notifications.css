@@ -200,3 +200,50 @@
     gap: var(--spacing-sm);
     flex-wrap: wrap;
 }
+
+/* Notification summary */
+.notification-summary {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+/* Chat Reply Form */
+.chat-reply-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.chat-reply-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+}
+
+.chat-reply-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(11, 110, 110, 0.1);
+}
+
+.chat-reply-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.chat-reply-message {
+    font-size: 0.85rem;
+    margin: 0;
+}

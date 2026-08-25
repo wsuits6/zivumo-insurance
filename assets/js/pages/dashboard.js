@@ -64,7 +64,7 @@ async function loadDashboardData() {
 
     const email = localStorage.getItem('aves_user_email');
     if (email && statsEl.notifications && window.NotificationStore) {
-        statsEl.notifications.textContent = window.NotificationStore.getUnreadUserCount(email);
+        statsEl.notifications.textContent = window.NotificationStore.getTotalUnreadMessages(email);
     } else if (statsEl.notifications && statsResponse.ok) {
         statsEl.notifications.textContent = statsResponse.data.notifications || 0;
     }
