@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.initNavToggle) initNavToggle();
     if (window.initCardAnimations) initCardAnimations();
 
+    if (window.initTour) initTour();
+
     if (window.initAuthForms) initAuthForms();
     if (window.initAppAuth) initAppAuth();
     if (window.initAccountSettings) initAccountSettings();
@@ -48,6 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadInvoicesPage();
     }
 
+    if (path.includes('payments-methods.html') && window.initPaymentsPage) {
+        initPaymentsPage();
+    }
+
     if (path.includes('admin-login.html') && window.setupAdminLogin) {
         setupAdminLogin();
     }
@@ -67,6 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (path.includes('admin-notifications.html') && window.loadAdminNotifications) {
         loadAdminNotifications();
+    }
+
+    if (path.includes('admin-complaints.html') && window.loadAdminComplaintsPage) {
+        loadAdminComplaintsPage();
+    } else if (path.includes('complaints.html') && window.loadUserComplaintsPage) {
+        loadUserComplaintsPage();
+    }
+
+    if (path.includes('payment-callback.html') && window.verifyPayment) {
+        verifyPayment();
     }
 });
 

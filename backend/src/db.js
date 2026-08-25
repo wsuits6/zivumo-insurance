@@ -11,7 +11,7 @@ function getDb() {
       const raw = fs.readFileSync(SEED_PATH, 'utf-8');
       _db = JSON.parse(raw);
     } catch {
-      _db = { users: [], policies: [], notifications: [], documents: [], invoices: [], paymentMethods: [] };
+      _db = { users: [], policies: [], notifications: [], documents: [], invoices: [], paymentMethods: [], payments: [], complaints: [] };
     }
   }
   return _db;

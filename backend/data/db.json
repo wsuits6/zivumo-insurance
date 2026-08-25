@@ -142,5 +142,17 @@
   ],
   "documents": [],
   "invoices": [],
-  "paymentMethods": []
+  "paymentMethods": [],
+  "complaints": [
+    {
+      "id": 1,
+      "userId": 3,
+      "subject": "Delayed policy document delivery",
+      "description": "I renewed my health policy over two weeks ago but I have not received the updated policy schedule document. Please advise when I should expect it.",
+      "status": "open",
+      "createdAt": "2026-08-20T09:30:00.000Z",
+      "replies": []
+    }
+  ],
+  "payments": []
 }

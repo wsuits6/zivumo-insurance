@@ -147,6 +147,112 @@ function setupNewPolicy() {
     policyStart.addEventListener('change', autoFillPremium);
     policyEnd.addEventListener('change', autoFillPremium);
 
+    let pendingPolicyPayload = null;
+    let pendingManualMethod = null;
+
+    function setModalView(view) {
+        document.getElementById('payMethodSelect').style.display = view === 'select' ? 'block' : 'none';
+        document.getElementById('payManualDetails').style.display = view === 'manual' ? 'block' : 'none';
+        document.getElementById('paySubmitted').style.display = view === 'submitted' ? 'block' : 'none';
+    }
+
+    function setPayMessage(text, isError) {
+        const messageEl = document.getElementById('payModalMessage');
+        if (!messageEl) return;
+        messageEl.textContent = text || '';
+        messageEl.classList.toggle('form-message-error', Boolean(isError));
+    }
+
+    function escapePolicyHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str == null ? '' : String(str);
+        return div.innerHTML;
+    }
+
+    function openPaymentModal(payload) {
+        pendingPolicyPayload = payload;
+        pendingManualMethod = null;
+        const summary = document.getElementById('paySummary');
+        if (summary) {
+            summary.innerHTML = `
+                <div class="pay-summary-row"><span>Policy Type</span><strong>${escapePolicyHtml(payload.type)}</strong></div>
+                <div class="pay-summary-row"><span>Coverage Period</span><strong>${payload.startDate} &rarr; ${payload.endDate}</strong></div>
+                <div class="pay-summary-row pay-total"><span>Amount Due</span><strong>GHS ${Number(payload.premium).toFixed(2)}</strong></div>
+            `;
+        }
+        setModalView('select');
+        setPayMessage('');
+        document.getElementById('policyPaymentModal').classList.add('open');
+    }
+
+    window.closePaymentModal = function () {
+        document.getElementById('policyPaymentModal').classList.remove('open');
+        pendingPolicyPayload = null;
+        pendingManualMethod = null;
+    };
+
+    async function showManualDetails(method) {
+        pendingManualMethod = method;
+        setPayMessage('Loading payment details...');
+
+        const response = await apiRequest(`/api/payments/instructions/${method}`, 'GET');
+        if (!response.ok) {
+            setPayMessage(response.message || 'Unable to load payment details.', true);
+            return;
+        }
+
+        const label = response.data.label;
+        document.getElementById('payManualTitle').textContent = `${label} - Payment Details`;
+        document.getElementById('payManualAccounts').innerHTML = response.data.accounts.map((acc) => `
+            <div class="pay-account">
+                <div class="pay-account-network">${escapePolicyHtml(acc.network)}</div>
+                <div class="pay-account-row"><span>Number</span><strong>${escapePolicyHtml(acc.number)}</strong></div>
+                <div class="pay-account-row"><span>Account Name</span><strong>${escapePolicyHtml(acc.accountName)}</strong></div>
+            </div>
+        `).join('');
+
+        setPayMessage('');
+        setModalView('manual');
+    }
+
+    async function confirmManualPayment() {
+        if (!pendingPolicyPayload || !pendingManualMethod) return;
+
+        const paidBtn = document.getElementById('payPaidBtn');
+        paidBtn.disabled = true;
+        setPayMessage('Submitting your purchase for approval...');
+
+        const response = await apiRequest('/api/payments/initialize', 'POST', {
+            ...pendingPolicyPayload,
+            method: pendingManualMethod
+        });
+
+        paidBtn.disabled = false;
+
+        if (!response.ok) {
+            setPayMessage(response.message || 'Unable to submit your purchase. Please try again.', true);
+            return;
+        }
+
+        document.getElementById('paySubmittedRef').textContent = response.data.reference;
+        setModalView('submitted');
+        setPayMessage('');
+    }
+
+    document.querySelectorAll('.pay-method').forEach((button) => {
+        button.addEventListener('click', () => {
+            if (!pendingPolicyPayload) return;
+            showManualDetails(button.getAttribute('data-method'));
+        });
+    });
+
+    document.getElementById('payPaidBtn').addEventListener('click', confirmManualPayment);
+    document.getElementById('payBackBtn').addEventListener('click', () => {
+        pendingManualMethod = null;
+        setModalView('select');
+        setPayMessage('');
+    });
+
     newPolicyForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const messageEl = document.getElementById('newPolicyMessage');
@@ -170,25 +276,14 @@ function setupNewPolicy() {
             return;
         }
 
-        const payload = {
+        openPaymentModal({
             type: typeSelect.value,
             coverage: coverageText.value.trim(),
             startDate: policyStart.value,
             endDate: policyEnd.value,
             premium: total.toFixed(2),
             currency: 'GHS'
-        };
-        const response = await apiRequest('/api/policies', 'POST', payload);
-        if (response.ok) {
-            messageEl.classList.remove('form-message-error');
-            messageEl.textContent = response.message || 'Policy created.';
-            newPolicyForm.reset();
-            if (rateInfoEl) rateInfoEl.textContent = '';
-            if (policyDurationHint) policyDurationHint.textContent = '';
-        } else {
-            messageEl.textContent = response.message || 'Unable to create policy.';
-            messageEl.classList.add('form-message-error');
-        }
+        });
     });
 }
 

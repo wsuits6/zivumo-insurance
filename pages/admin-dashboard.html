@@ -32,6 +32,8 @@
                 </div>
                 <div class="nav-links">
                     <a href="admin-dashboard.html" class="nav-link active">Dashboard</a>
+                    <a href="admin-notifications.html" class="nav-link">Messages</a>
+                    <a href="admin-complaints.html" class="nav-link">Complaints</a>
                     <a href="../index.html" class="nav-link">Main Site</a>
                     <button class="btn btn-secondary btn-sm" id="adminLogoutBtn">Logout</button>
                 </div>
@@ -100,11 +102,36 @@
                 </div>
                 <div class="stat-card">
                     <div class="icon-wrap">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 12h8"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="adminInactivePolicies">--</h3>
+                        <p>Inactive Policies</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-wrap">
                         <span class="icon cedis-icon" aria-hidden="true">₵</span>
                     </div>
                     <div class="stat-info">
                         <h3 id="adminTotalPremium">--</h3>
                         <p>Total Premium (GHS)</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-wrap secondary">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M1 21h22L12 2 1 21z"></path>
+                            <path d="M12 9v4"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="adminOpenComplaints">--</h3>
+                        <p>Open Complaints</p>
                     </div>
                 </div>
             </div>
@@ -155,6 +182,18 @@
                     </div>
                     <h3>Messages</h3>
                     <p>View and reply to help messages from users.</p>
+                </a>
+                <a href="admin-complaints.html" class="dashboard-card action-card notification-action-card">
+                    <span class="notification-badge" id="adminComplaintBadge" style="display:none;"></span>
+                    <div class="icon-wrap secondary">
+                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M1 21h22L12 2 1 21z"></path>
+                            <path d="M12 9v4"></path>
+                            <path d="M12 17h.01"></path>
+                        </svg>
+                    </div>
+                    <h3>Complaints</h3>
+                    <p>Review and respond to customer complaints.</p>
                 </a>
             </div>
 
@@ -297,6 +336,75 @@
                 </div>
             </div>
 
+            <div class="admin-section">
+                <div class="section-title">
+                    <h2>Pending Purchases <span class="badge badge-warning" id="pendingPurchasesBadge" style="display:none;"></span></h2>
+                </div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Policy</th>
+                                <th>Premium</th>
+                                <th>Method</th>
+                                <th>Reference</th>
+                                <th>Requested</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingPurchasesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-section">
+                <div class="section-title">
+                    <h2>Complaints</h2>
+                </div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Subject</th>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Replies</th>
+                                <th>Filed</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminComplaintsTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Complaint Chat Modal -->
+            <div id="complaintChatModal" class="modal">
+                <div class="modal-content modal-content--wide">
+                    <span class="close" onclick="closeModal('complaintChatModal')">&times;</span>
+                    <div class="modal-header">
+                        <div>
+                            <h2 id="complaintChatSubject">Complaint</h2>
+                            <p class="modal-subtitle" id="complaintChatMeta"></p>
+                        </div>
+                    </div>
+                    <div class="chat-thread chat-thread--modal" id="complaintChatThread" style="display:flex;"></div>
+                    <form id="complaintReplyForm" class="chat-reply-form">
+                        <textarea id="complaintReplyInput" class="chat-reply-input" placeholder="Write a reply to the customer..." maxlength="5000" required></textarea>
+                        <p id="complaintReplyMessage" class="chat-reply-message"></p>
+                        <div class="chat-reply-actions">
+                            <button type="button" class="btn btn-secondary btn-sm" id="complaintResolveBtn" onclick="resolveComplaintFromModal()">Mark Resolved</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Send Reply</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Confirm Delete Modal -->
             <div id="confirmModal" class="modal">
                 <div class="modal-content">
@@ -376,6 +484,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="../assets/js/pages/admin.js"></script>
     <script src="../assets/js/pages/admin-notifications.js"></script>
+    <script src="../assets/js/core/tour.js"></script>
     <script src="../assets/js/bootstrap.js"></script>
 </body>
 </html>

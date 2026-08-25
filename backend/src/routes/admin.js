@@ -8,6 +8,20 @@ const ADMIN_PASSWORD_HASH = ADMIN_PASSWORD_SEED ? bcrypt.hashSync(ADMIN_PASSWORD
 
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
+const POLICY_CATALOG_TYPES = [
+  'Education Policy',
+  'Health Policy',
+  'Property Policy',
+  'Business Policy',
+  'Motor Policy',
+  'Travel Policy',
+  'Life Policy',
+  'Funeral Policy',
+  'Disability Policy',
+  'Marine Policy',
+  'Corporate Policy'
+];
+
 function createAdminRouter() {
   const router = express.Router();
 
@@ -37,12 +51,20 @@ function createAdminRouter() {
 
   router.get('/summary', requireAdmin, asyncHandler(async (_req, res) => {
     const db = getDb();
+    const activePolicies = db.policies.filter((p) => p.status === 'active').length;
+    const purchasedTypes = new Set(
+      db.policies.map((p) => String(p.type || '').trim().toLowerCase())
+    );
+    const inactivePolicies = POLICY_CATALOG_TYPES.filter(
+      (type) => !purchasedTypes.has(type.toLowerCase())
+    ).length;
     res.json({
       ok: true,
       data: {
         totalUsers: db.users.length,
         totalPolicies: db.policies.length,
-        activePolicies: db.policies.filter((p) => p.status === 'active').length,
+        activePolicies,
+        inactivePolicies,
         totalPremium: db.policies.reduce((sum, p) => sum + (Number(p.premium) || 0), 0).toFixed(2)
       }
     });

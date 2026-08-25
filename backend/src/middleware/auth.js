@@ -47,6 +47,7 @@ function requireAdmin(req, res, next) {
     if (decoded.role !== 'admin') {
       return res.status(401).json({ ok: false, message: 'Unauthorized' });
     }
+    req.admin = { role: decoded.role, adminId: decoded.adminId != null ? decoded.adminId : null };
     return next();
   } catch {
     return res.status(401).json({ ok: false, message: 'Invalid token' });

@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice History - Aves Insurance</title>
+    <title>Complaints - Aves Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/base.css">
     <link rel="stylesheet" href="../assets/css/layout.css">
     <link rel="stylesheet" href="../assets/css/components.css">
     <link rel="stylesheet" href="../assets/css/pages/app.css">
+    <link rel="stylesheet" href="../assets/css/pages/notifications.css">
     <link rel="stylesheet" href="../assets/css/responsive.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar dashboard-navbar">
         <div class="container">
             <div class="nav-content">
                 <div class="logo">
@@ -30,6 +31,8 @@
                 <div class="nav-links">
                     <a href="dashboard.html" class="nav-link">Dashboard</a>
                     <a href="policies.html" class="nav-link">My Policies</a>
+                    <a href="user-notifications.html" class="nav-link">Notifications</a>
+                    <a href="complaints.html" class="nav-link active">Complaints</a>
                     <a href="account-settings.html" class="nav-link">Account Settings</a>
                     <button class="btn btn-secondary btn-sm" id="logoutBtn">Logout</button>
                 </div>
@@ -51,13 +54,30 @@
         </div>
     </nav>
 
-    <section class="dashboard-content">
+    <section class="settings-section">
         <div class="container">
             <div class="section-title">
-                <h2>Invoice History</h2>
-                <a class="btn btn-secondary" href="account-settings.html">Back to Settings</a>
+                <h2>My Complaints</h2>
             </div>
-            <div id="invoicesList" class="data-list"></div>
+
+            <div class="settings-card" data-tour-target="complaints">
+                <h3>File a Complaint</h3>
+                <p class="form-hint">Describe your issue and our support team will respond here.</p>
+                <form id="complaintForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="complaintSubject">Subject</label>
+                        <input type="text" id="complaintSubject" maxlength="150" required placeholder="Brief summary of your complaint">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaintDescription">Description</label>
+                        <textarea id="complaintDescription" rows="5" maxlength="5000" required placeholder="Describe your issue in detail..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit Complaint</button>
+                    <p id="complaintFormMessage" class="form-message"></p>
+                </form>
+            </div>
+
+            <div class="notification-list" id="complaintList" style="margin-top: var(--spacing-lg);"></div>
         </div>
     </section>
 
@@ -77,13 +97,15 @@
                     </div>
                     <div class="footer-column">
                         <h4>Account</h4>
-                        <a href="account-settings.html">Account Settings</a>
                         <a href="login.html">Login</a>
+                        <a href="signup.html">Sign Up</a>
+                        <a href="account-settings.html">Account Settings</a>
                     </div>
                     <div class="footer-column">
                         <h4>Support</h4>
                         <a href="help-center.html">Help Center</a>
                         <a href="contact-us.html">Contact Us</a>
+                        <a href="complaints.html">Complaints</a>
                     </div>
                 </div>
             </div>
@@ -95,6 +117,8 @@
 
     <script src="../assets/js/core/api.js"></script>
     <script src="../assets/js/core/utils.js"></script>
+    <script src="../assets/js/core/policy-data.js"></script>
+    <script src="../assets/js/core/notifications.js"></script>
     <script src="../assets/js/core/theme.js"></script>
     <script src="../assets/js/core/smooth-scroll.js"></script>
     <script src="../assets/js/core/nav.js"></script>
@@ -106,6 +130,7 @@
     <script src="../assets/js/pages/data.js"></script>
     <script src="../assets/js/pages/account-settings.js"></script>
     <script src="../assets/js/pages/admin.js"></script>
+    <script src="../assets/js/pages/complaints.js"></script>
     <script src="../assets/js/core/tour.js"></script>
     <script src="../assets/js/bootstrap.js"></script>
 </body>

@@ -57,7 +57,7 @@
                 <h2>Add New Policy</h2>
                 <p class="form-hint">Provide policy details to add coverage to your account.</p>
             </div>
-            <div class="settings-card">
+            <div class="settings-card" data-tour-target="new-policy">
                 <form id="newPolicyForm" class="auth-form">
                     <div class="form-group">
                         <label for="policyType">Policy Type</label>
@@ -89,6 +89,72 @@
             </div>
         </div>
     </section>
+
+    <!-- Payment Method Modal -->
+    <div id="policyPaymentModal" class="pay-modal">
+        <div class="pay-modal-content">
+            <span class="pay-close" onclick="closePaymentModal()">&times;</span>
+            <h2>Complete Your Purchase</h2>
+            <p class="pay-subtitle">Your policy is issued and becomes active immediately after a successful payment.</p>
+            <div class="pay-summary" id="paySummary"></div>
+
+            <!-- Step 1: choose a method -->
+            <div id="payMethodSelect">
+                <h3 class="pay-methods-title">Select Payment Method</h3>
+                <div class="pay-methods">
+                    <button type="button" class="pay-method" data-method="mobile_money">
+                        <span class="pay-method-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"></rect><path d="M11 18h2"></path></svg>
+                        </span>
+                        <span class="pay-method-text">
+                            <strong>Mobile Money</strong>
+                            <small>MTN MoMo, Telecel Cash, AirtelTigo</small>
+                        </span>
+                    </button>
+                    <button type="button" class="pay-method" data-method="card">
+                        <span class="pay-method-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg>
+                        </span>
+                        <span class="pay-method-text">
+                            <strong>Card</strong>
+                            <small>Visa, Mastercard - transfer to our official account</small>
+                        </span>
+                    </button>
+                    <button type="button" class="pay-method" data-method="bank">
+                        <span class="pay-method-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"></path><path d="M4 9l8-6 8 6"></path><path d="M6 9v9M10 9v9M14 9v9M18 9v9"></path></svg>
+                        </span>
+                        <span class="pay-method-text">
+                            <strong>Bank Transfer</strong>
+                            <small>Pay directly from your bank account</small>
+                        </span>
+                    </button>
+                </div>
+                <p class="pay-powered">Your policy activates once our team confirms your payment.</p>
+            </div>
+
+            <!-- Step 2: manual Card / MoMo / Bank account details -->
+            <div class="pay-manual" id="payManualDetails" style="display:none;">
+                <h3 class="pay-methods-title" id="payManualTitle">Payment Details</h3>
+                <p class="pay-manual-hint">Send the exact amount to any of our official accounts below, then confirm your payment.</p>
+                <div id="payManualAccounts"></div>
+                <div class="pay-manual-actions">
+                    <button type="button" class="btn btn-primary btn-block" id="payPaidBtn">I Have Made This Payment</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="payBackBtn">&larr; Choose Another Method</button>
+                </div>
+            </div>
+
+            <!-- Step 3: submitted, awaiting admin approval -->
+            <div class="pay-submitted" id="paySubmitted" style="display:none;">
+                <div class="pay-submitted-icon">&#10003;</div>
+                <h3>Payment Submitted!</h3>
+                <p>Your purchase is now <strong>pending approval</strong>. Once our team confirms your payment, your policy will be activated and a notification will appear on your dashboard.</p>
+                <p class="pay-manual-ref">Reference: <strong id="paySubmittedRef"></strong></p>
+            </div>
+
+            <p id="payModalMessage" class="form-message"></p>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container">
@@ -136,6 +202,7 @@
     <script src="../assets/js/pages/data.js"></script>
     <script src="../assets/js/pages/account-settings.js"></script>
     <script src="../assets/js/pages/admin.js"></script>
+    <script src="../assets/js/core/tour.js"></script>
     <script src="../assets/js/bootstrap.js"></script>
 </body>
 </html>

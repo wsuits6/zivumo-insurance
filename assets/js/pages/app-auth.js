@@ -23,6 +23,9 @@ class AppAuth {
                 window.location.pathname.includes('new-policy.html') ||
                 window.location.pathname.includes('documents.html') ||
                 window.location.pathname.includes('invoices.html') ||
+                window.location.pathname.includes('payments-methods.html') ||
+                window.location.pathname.includes('complaints.html') ||
+                window.location.pathname.includes('payment-callback.html') ||
                 false) {
                 window.location.href = 'login.html';
             }
@@ -31,6 +34,9 @@ class AppAuth {
         this.user = response.data;
         if (this.user && this.user.email) {
             localStorage.setItem('aves_user_email', this.user.email);
+        }
+        if (window.syncServerNotifications) {
+            window.syncServerNotifications().catch(() => {});
         }
     }
 
@@ -84,6 +90,9 @@ function initAppAuth() {
         'new-policy.html',
         'documents.html',
         'invoices.html',
+        'payments-methods.html',
+        'complaints.html',
+        'payment-callback.html',
 
         'sessions.html',
         'mfa-settings.html',

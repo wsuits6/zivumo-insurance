@@ -159,6 +159,243 @@ window.handleArchivePolicy = handleArchivePolicy;
 window.handleRestorePolicy = handleRestorePolicy;
 window.handleDeletePolicy = handleDeletePolicy;
 
+/* ---------- Complaints (dashboard section) ---------- */
+let dashboardComplaints = [];
+let activeDashboardComplaintId = null;
+
+function complaintEscape(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+}
+
+function complaintStatusPill(status) {
+    const badgeClass = status === 'resolved' ? 'badge-success' : status === 'in-progress' ? 'badge-error' : 'badge-warning';
+    const label = status === 'in-progress' ? 'In Progress' : status.charAt(0).toUpperCase() + status.slice(1);
+    return `<span class="badge ${badgeClass}">${label}</span>`;
+}
+
+async function loadDashboardComplaints() {
+    const tbody = document.getElementById('adminComplaintsTable');
+    const statEl = document.getElementById('adminOpenComplaints');
+    if (!tbody && !statEl) return;
+
+    const response = await apiRequest('/api/admin/complaints', 'GET');
+    if (!response.ok) return;
+
+    dashboardComplaints = response.data || [];
+    renderComplaintsTable();
+    updateComplaintIndicators();
+}
+
+function renderComplaintsTable() {
+    const tbody = document.getElementById('adminComplaintsTable');
+    if (!tbody) return;
+
+    if (dashboardComplaints.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-secondary);">No complaints have been filed yet.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = dashboardComplaints.map((c) => `
+        <tr>
+            <td>#${c.id}</td>
+            <td>${complaintEscape(c.subject)}</td>
+            <td>${complaintEscape(c.userName)}</td>
+            <td>${complaintEscape(c.userEmail)}</td>
+            <td>${complaintStatusPill(c.status)}</td>
+            <td>${c.replies.length}</td>
+            <td>${AvesUtils.formatDate(c.createdAt)}</td>
+            <td><button class="btn btn-sm btn-primary" onclick="openComplaintChat(${c.id})">View &amp; Reply</button></td>
+        </tr>
+    `).join('');
+}
+
+function updateComplaintIndicators() {
+    const openCount = dashboardComplaints.filter((c) => c.status !== 'resolved').length;
+
+    const statEl = document.getElementById('adminOpenComplaints');
+    if (statEl) statEl.textContent = openCount;
+
+    const badge = document.getElementById('adminComplaintBadge');
+    if (badge) {
+        badge.textContent = openCount > 0 ? openCount : '';
+        badge.setAttribute('data-count', openCount);
+        badge.style.display = openCount > 0 ? 'flex' : 'none';
+    }
+}
+
+function buildDashboardBubbles(complaint) {
+    const bubbles = [];
+
+    bubbles.push(`
+        <div class="chat-bubble chat-bubble-user">
+            <div class="chat-meta">${complaintEscape(complaint.userName || 'User')} &middot; ${AvesUtils.formatDate(complaint.createdAt)}</div>
+            <div class="chat-message">${complaintEscape(complaint.description)}</div>
+        </div>
+    `);
+
+    complaint.replies.forEach((reply) => {
+        bubbles.push(`
+            <div class="chat-bubble chat-bubble-admin">
+                <div class="chat-meta">You (Admin) &middot; ${new Date(reply.timestamp).toLocaleString()}</div>
+                <div class="chat-message">${complaintEscape(reply.message)}</div>
+            </div>
+        `);
+    });
+
+    if (complaint.replies.length === 0) {
+        bubbles.push('<div class="chat-waiting">No replies yet. Send a reply below.</div>');
+    }
+
+    return bubbles.join('');
+}
+
+function refreshComplaintModalThread() {
+    const complaint = dashboardComplaints.find((c) => c.id === activeDashboardComplaintId);
+    if (!complaint) return;
+
+    document.getElementById('complaintChatSubject').textContent = `#${complaint.id} - ${complaint.subject}`;
+    document.getElementById('complaintChatMeta').textContent =
+        `${complaint.userName} (${complaint.userEmail}) - Status: ${complaint.status === 'in-progress' ? 'In Progress' : complaint.status}`;
+
+    const thread = document.getElementById('complaintChatThread');
+    thread.innerHTML = buildDashboardBubbles(complaint);
+    thread.scrollTop = thread.scrollHeight;
+
+    document.getElementById('complaintResolveBtn').style.display = complaint.status === 'resolved' ? 'none' : '';
+}
+
+function openComplaintChat(id) {
+    const complaint = dashboardComplaints.find((c) => c.id === id);
+    if (!complaint) return;
+
+    activeDashboardComplaintId = id;
+    document.getElementById('complaintReplyInput').value = '';
+    document.getElementById('complaintReplyMessage').textContent = '';
+    refreshComplaintModalThread();
+    openModal('complaintChatModal');
+}
+
+async function submitComplaintReplyFromModal(event) {
+    event.preventDefault();
+    const input = document.getElementById('complaintReplyInput');
+    const messageEl = document.getElementById('complaintReplyMessage');
+
+    messageEl.textContent = '';
+    const message = input.value.trim();
+    if (!message) {
+        messageEl.textContent = 'Please write a reply first.';
+        return;
+    }
+
+    const response = await apiRequest(`/api/admin/complaints/${activeDashboardComplaintId}/reply`, 'POST', { message });
+    if (!response.ok) {
+        messageEl.textContent = response.message || 'Failed to send reply.';
+        return;
+    }
+
+    const index = dashboardComplaints.findIndex((c) => c.id === response.data.id);
+    if (index !== -1) dashboardComplaints[index] = { ...dashboardComplaints[index], ...response.data };
+
+    input.value = '';
+    refreshComplaintModalThread();
+    renderComplaintsTable();
+    updateComplaintIndicators();
+}
+
+async function resolveComplaintFromModal() {
+    const response = await apiRequest(`/api/admin/complaints/${activeDashboardComplaintId}/status`, 'PUT', { status: 'resolved' });
+    if (!response.ok) {
+        alert(response.message || 'Failed to update status.');
+        return;
+    }
+
+    const index = dashboardComplaints.findIndex((c) => c.id === response.data.id);
+    if (index !== -1) dashboardComplaints[index] = { ...dashboardComplaints[index], ...response.data };
+
+    refreshComplaintModalThread();
+    renderComplaintsTable();
+    updateComplaintIndicators();
+}
+
+function setupComplaintModal() {
+    const form = document.getElementById('complaintReplyForm');
+    if (form) form.onsubmit = submitComplaintReplyFromModal;
+}
+
+window.openComplaintChat = openComplaintChat;
+window.resolveComplaintFromModal = resolveComplaintFromModal;
+
+/* ---------- Pending purchases (manual MoMo / bank payments awaiting approval) ---------- */
+const PURCHASE_METHOD_LABELS = { mobile_money: 'Mobile Money', card: 'Card', bank: 'Bank Transfer' };
+
+async function loadPendingPurchases() {
+    const tbody = document.getElementById('pendingPurchasesTable');
+    if (!tbody) return;
+
+    const response = await apiRequest('/api/admin/purchases/pending', 'GET');
+    if (!response.ok) return;
+
+    const purchases = response.data || [];
+    renderPurchasesTable(purchases);
+}
+
+function renderPurchasesTable(purchases) {
+    const tbody = document.getElementById('pendingPurchasesTable');
+    if (!tbody) return;
+
+    const badge = document.getElementById('pendingPurchasesBadge');
+    if (badge) {
+        badge.textContent = purchases.length > 0 ? purchases.length : '';
+        badge.style.display = purchases.length > 0 ? 'inline-flex' : 'none';
+    }
+
+    if (purchases.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-secondary);">No purchases are awaiting approval.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = purchases.map((p) => `
+        <tr>
+            <td>#${p.id}</td>
+            <td>${complaintEscape(p.userName)}</td>
+            <td>${complaintEscape(p.userEmail)}</td>
+            <td>${complaintEscape(p.draft.type)}</td>
+            <td>${AvesUtils.formatCurrency(p.amount)}</td>
+            <td>${PURCHASE_METHOD_LABELS[p.method] || complaintEscape(p.method)}</td>
+            <td>${complaintEscape(p.reference)}</td>
+            <td>${AvesUtils.formatDate(p.createdAt)}</td>
+            <td>
+                <button class="btn btn-sm btn-primary" onclick="handleApprovePurchase(${p.id})">Approve</button>
+                <button class="btn btn-sm btn-alert" onclick="handleRejectPurchase(${p.id})">Reject</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function handleApprovePurchase(id) {
+    const res = await apiRequest(`/api/admin/purchases/${id}/approve`, 'POST');
+    if (res.ok) {
+        await loadPendingPurchases();
+        await loadAdminDashboard();
+    } else {
+        alert(res.message || 'Failed to approve purchase');
+    }
+}
+
+async function handleRejectPurchase(id) {
+    const res = await apiRequest(`/api/admin/purchases/${id}/reject`, 'POST');
+    if (res.ok) {
+        await loadPendingPurchases();
+    } else {
+        alert(res.message || 'Failed to reject purchase');
+    }
+}
+
+window.handleApprovePurchase = handleApprovePurchase;
+window.handleRejectPurchase = handleRejectPurchase;
+
 /* ---------- Table rendering ---------- */
 function renderUsersTable(users, filter) {
     const filtered = filter === 'all'
@@ -243,6 +480,7 @@ async function loadAdminDashboard() {
         totalUsers: document.getElementById('adminTotalUsers'),
         totalPolicies: document.getElementById('adminTotalPolicies'),
         activePolicies: document.getElementById('adminActivePolicies'),
+        inactivePolicies: document.getElementById('adminInactivePolicies'),
         totalPremium: document.getElementById('adminTotalPremium')
     };
     const usersTable = document.getElementById('adminUsersTable');
@@ -270,6 +508,7 @@ async function loadAdminDashboard() {
     if (summaryEl.totalUsers) summaryEl.totalUsers.textContent = response.data.totalUsers;
     if (summaryEl.totalPolicies) summaryEl.totalPolicies.textContent = response.data.totalPolicies;
     if (summaryEl.activePolicies) summaryEl.activePolicies.textContent = response.data.activePolicies;
+    if (summaryEl.inactivePolicies) summaryEl.inactivePolicies.textContent = response.data.inactivePolicies;
     if (summaryEl.totalPremium) summaryEl.totalPremium.textContent = response.data.totalPremium;
 
     if (usersTable) {
@@ -285,6 +524,9 @@ async function loadAdminDashboard() {
             renderPoliciesTable(policiesResponse.data, currentPolicyFilter);
         }
     }
+
+    await loadDashboardComplaints();
+    await loadPendingPurchases();
 
     if (window.updateAdminNotificationBadge) {
         window.updateAdminNotificationBadge();
@@ -427,9 +669,10 @@ function setupAdminActions() {
         });
     }
 
-    /* One-time setup for confirm modal listener and tabs */
+    /* One-time setup for confirm modal listener, tabs, and complaint modal */
     setupConfirmListener();
     setupTabs();
+    setupComplaintModal();
 }
 
 window.openModal = openModal;

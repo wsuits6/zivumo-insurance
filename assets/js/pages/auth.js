@@ -20,6 +20,8 @@ class FormValidator {
             this.handleLogin(data);
         } else if (this.form.id === 'signupForm') {
             this.handleSignup(data);
+        } else if (this.form.id === 'addPaymentMethodForm') {
+            this.handlePaymentMethod(data);
         }
     }
 
@@ -108,6 +110,52 @@ class FormValidator {
         return emailRegex.test(email);
     }
 
+    isValidLast4(last4) {
+        return /^\d{4}$/.test(String(last4));
+    }
+
+    isValidExpiry(expiry) {
+        return /^(0[1-9]|1[0-2])\/\d{2}$/.test(String(expiry).trim());
+    }
+
+    handlePaymentMethod(data) {
+        if (!data.brand || !data.brand.trim()) {
+            this.showMessage('Please enter the card brand', 'error');
+            return;
+        }
+
+        const last4 = String(data.cardNumber || '').replace(/\D/g, '').slice(-4);
+        if (!this.isValidLast4(last4)) {
+            this.showMessage('Card number must end with 4 digits', 'error');
+            return;
+        }
+
+        if (!this.isValidExpiry(data.expiry)) {
+            this.showMessage('Expiry must be in MM/YY format (e.g. 08/27)', 'error');
+            return;
+        }
+
+        const payload = {
+            brand: data.brand.trim(),
+            cardNumber: String(data.cardNumber || '').trim(),
+            expiry: String(data.expiry || '').trim(),
+            isDefault: Boolean(data.isDefault)
+        };
+
+        apiRequest('/api/payment-methods', 'POST', payload)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.message || 'Unable to add payment method');
+                }
+                this.showMessage(response.message || 'Payment method added.', 'success');
+                this.form.reset();
+                if (window.loadPaymentsMethods) window.loadPaymentsMethods();
+            })
+            .catch((error) => {
+                this.showMessage(error.message, 'error');
+            });
+    }
+
     showMessage(message, type) {
         const existingMessage = document.querySelector('.form-message');
         if (existingMessage) {
@@ -143,6 +191,7 @@ class FormValidator {
 function initAuthForms() {
     new FormValidator('loginForm');
     new FormValidator('signupForm');
+    new FormValidator('addPaymentMethodForm');
 }
 
 window.initAuthForms = initAuthForms;

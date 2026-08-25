@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice History - Aves Insurance</title>
+    <title>Payment Methods - Aves Insurance</title>
     <link rel="icon" type="image/png" href="../assets/images/logo.png">
     <link rel="stylesheet" href="../assets/css/base.css">
     <link rel="stylesheet" href="../assets/css/layout.css">
@@ -54,10 +54,38 @@
     <section class="dashboard-content">
         <div class="container">
             <div class="section-title">
-                <h2>Invoice History</h2>
+                <h2>Payment Methods</h2>
                 <a class="btn btn-secondary" href="account-settings.html">Back to Settings</a>
             </div>
-            <div id="invoicesList" class="data-list"></div>
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h3>Add Payment Method</h3>
+                    <form class="auth-form" id="addPaymentMethodForm">
+                        <div class="form-group">
+                            <label for="paymentBrand">Card Brand</label>
+                            <input type="text" id="paymentBrand" name="brand" placeholder="e.g. Visa, Mastercard" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentCardNumber">Card Number</label>
+                            <input type="text" id="paymentCardNumber" name="cardNumber" inputmode="numeric" autocomplete="cc-number" maxlength="19" placeholder="1234567890123456" required>
+                            <p class="form-hint">Only the last 4 digits are stored.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="paymentExpiry">Expiry (MM/YY)</label>
+                            <input type="text" id="paymentExpiry" name="expiry" inputmode="numeric" maxlength="5" placeholder="MM/YY" required>
+                        </div>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="paymentIsDefault" name="isDefault">
+                            <span>Set as default payment method</span>
+                        </label>
+                        <button type="submit" class="btn btn-primary">Add Payment Method</button>
+                    </form>
+                </div>
+                <div class="settings-card" data-tour-target="payment-methods">
+                    <h3>Saved Cards</h3>
+                    <div id="paymentMethodsList" class="data-list"></div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -100,12 +128,8 @@
     <script src="../assets/js/core/nav.js"></script>
     <script src="../assets/js/core/animations.js"></script>
     <script src="../assets/js/pages/auth.js"></script>
+    <script src="../assets/js/pages/payments.js"></script>
     <script src="../assets/js/pages/app-auth.js"></script>
-    <script src="../assets/js/pages/dashboard.js"></script>
-    <script src="../assets/js/pages/policies.js"></script>
-    <script src="../assets/js/pages/data.js"></script>
-    <script src="../assets/js/pages/account-settings.js"></script>
-    <script src="../assets/js/pages/admin.js"></script>
     <script src="../assets/js/core/tour.js"></script>
     <script src="../assets/js/bootstrap.js"></script>
 </body>

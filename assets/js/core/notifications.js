@@ -40,6 +40,27 @@ const NotificationStore = {
         return notification;
     },
 
+    /* One-way announcement from the platform (e.g. purchase confirmation) */
+    createSystemMessage(email, title, message) {
+        const items = this._read();
+        const notification = {
+            id: this._nextId(items),
+            username: 'Aves Admin',
+            email,
+            policyType: title,
+            message,
+            timestamp: new Date().toISOString(),
+            adminRead: true,
+            userRead: false,
+            reply: null,
+            replyTimestamp: null,
+            system: true
+        };
+        items.unshift(notification);
+        this._write(items);
+        return notification;
+    },
+
     getAll() {
         return this._read().sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     },
@@ -121,6 +142,47 @@ const NotificationStore = {
 NotificationStore._seed();
 
 window.NotificationStore = NotificationStore;
+
+/* Mirror backend notifications (approvals, renewals, purchases...) into the visible feed.
+   Server-side records are tracked by id so nothing is duplicated across reloads. */
+const SERVER_NOTIF_SEEN_KEY = 'aves_server_notifications_seen';
+
+function getSeenServerNotifIds() {
+    try {
+        return JSON.parse(localStorage.getItem(SERVER_NOTIF_SEEN_KEY)) || [];
+    } catch (_) {
+        return [];
+    }
+}
+
+async function syncServerNotifications() {
+    const email = localStorage.getItem('aves_user_email');
+    if (!email) return;
+
+    const response = await apiRequest('/api/notifications', 'GET');
+    if (!response.ok || !Array.isArray(response.data)) return;
+
+    const seen = getSeenServerNotifIds();
+    const titles = {
+        renewal: 'Policy Renewed',
+        purchase: 'Policy Approved'
+    };
+
+    response.data.forEach((n) => {
+        const key = 'srv-' + n.id;
+        if (seen.indexOf(key) !== -1) return;
+        window.NotificationStore.createSystemMessage(
+            email,
+            titles[n.type] || 'Aves Admin',
+            n.message
+        );
+        seen.push(key);
+    });
+
+    localStorage.setItem(SERVER_NOTIF_SEEN_KEY, JSON.stringify(seen.slice(-500)));
+}
+
+window.syncServerNotifications = syncServerNotifications;
 
 function updateUserNotificationBadge() {
     const badge = document.getElementById('userNotifBadge');

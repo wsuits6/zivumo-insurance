@@ -16,10 +16,6 @@ function createResourcesRouter() {
     res.json({ ok: true, data: req.db.invoices.filter((i) => i.userId === req.user.id) });
   });
 
-  router.get('/payment-methods', requireAuth, (req, res) => {
-    res.json({ ok: true, data: req.db.paymentMethods.filter((m) => m.userId === req.user.id) });
-  });
-
   return router;
 }
 

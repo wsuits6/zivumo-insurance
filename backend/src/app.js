@@ -10,6 +10,8 @@ const createAdminRouter = require('./routes/admin');
 const createPoliciesRouter = require('./routes/policies');
 const createAccountRouter = require('./routes/account');
 const createResourcesRouter = require('./routes/resources');
+const createPaymentRouter = require('./routes/payment');
+const createComplaintsRouter = require('./routes/complaints');
 
 const app = express();
 
@@ -43,6 +45,8 @@ app.use('/api/admin', createAdminRouter());
 app.use('/api', createPoliciesRouter());
 app.use('/api', createAccountRouter());
 app.use('/api', createResourcesRouter());
+app.use('/api', createPaymentRouter());
+app.use('/api', createComplaintsRouter());
 
 const ROOT_DIR = path.join(__dirname, '..', '..');
 
@@ -58,9 +62,10 @@ app.get('/index.html', (_req, res) => {
 
 const PAGE_LIST = [
   'policy-details', 'policy-renew', 'new-policy', 'policies', 'documents',
-  'invoices', 'payment-methods', 'password-update', 'mfa-settings', 'sessions',
+  'invoices', 'payment-methods', 'payments-methods', 'password-update', 'mfa-settings', 'sessions',
   'admin-login', 'admin-dashboard', 'login', 'signup', 'dashboard',
-  'account-settings', 'contact-us', 'help-center'
+  'account-settings', 'contact-us', 'help-center', 'user-notifications', 'admin-notifications',
+  'complaints', 'admin-complaints', 'payment-callback'
 ];
 
 PAGE_LIST.forEach((page) => {

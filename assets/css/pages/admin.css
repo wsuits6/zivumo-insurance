@@ -219,12 +219,13 @@
 
 /* Square stat cards in admin header */
 .dashboard-header .dashboard-stats-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--spacing-xs);
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.25rem;
 }
 @media (max-width: 768px) {
     .dashboard-header .dashboard-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
     }
 }
 
@@ -399,4 +400,89 @@
     height: 6px;
     border-radius: 50%;
     background: var(--primary-color);
+}
+
+/* === COMPLAINTS CHAT (ADMIN VIEW - MIRRORED) === */
+.chat-thread {
+    max-height: 460px;
+}
+
+.chat-thread--modal {
+    max-height: 320px;
+    margin-top: 0;
+    border: 1px solid var(--border-color);
+}
+
+/* User's complaint message - aligned left in admin view */
+.chat-bubble-user {
+    align-self: flex-start;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-bottom-right-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+.chat-bubble-user .chat-meta {
+    color: var(--text-secondary);
+}
+
+/* Admin's own replies - aligned right in admin view */
+.chat-bubble-admin {
+    align-self: flex-end;
+    background: var(--accent-color);
+    color: #ffffff;
+    border: none;
+    border-bottom-left-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.chat-bubble-admin .chat-meta {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] .chat-bubble-admin {
+    color: #0B1B1F;
+}
+
+/* Admin reply form */
+.chat-reply-form {
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.chat-reply-input {
+    width: 100%;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    resize: vertical;
+    min-height: 70px;
+}
+
+.chat-reply-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(31, 58, 147, 0.15);
+}
+
+.chat-reply-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.chat-reply-message {
+    font-size: 0.85rem;
+    min-height: 1.2em;
 }

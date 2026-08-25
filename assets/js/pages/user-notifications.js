@@ -55,7 +55,7 @@ function renderUserNotifications(email) {
                 <div class="notification-body" id="userNotifBody-${n.id}">
                     <div class="notification-full-message">${escapeHtml(n.message)}</div>
                     ${replyPreview}
-                    ${!n.reply ? '<p style="color:var(--text-secondary);font-size:0.875rem;font-style:italic;">Waiting for admin reply...</p>' : ''}
+                    ${(!n.reply && !n.system) ? '<p style="color:var(--text-secondary);font-size:0.875rem;font-style:italic;">Waiting for admin reply...</p>' : ''}
                 </div>
             </div>
         `;
