@@ -51,18 +51,18 @@ function createAdminRouter() {
 
   router.get('/summary', requireAdmin, asyncHandler(async (_req, res) => {
     const db = getDb();
-    const activePolicies = db.policies.filter((p) => p.status === 'active').length;
+    const activePolicies = new Set(
+      db.policies.filter((p) => p.status === 'active').map((p) => String(p.type || '').trim().toLowerCase())
+    ).size;
     const purchasedTypes = new Set(
       db.policies.map((p) => String(p.type || '').trim().toLowerCase())
     );
-    const inactivePolicies = POLICY_CATALOG_TYPES.filter(
-      (type) => !purchasedTypes.has(type.toLowerCase())
-    ).length;
+    const inactivePolicies = POLICY_CATALOG_TYPES.length - activePolicies;
     res.json({
       ok: true,
       data: {
         totalUsers: db.users.length,
-        totalPolicies: db.policies.length,
+        totalPolicies: POLICY_CATALOG_TYPES.length,
         activePolicies,
         inactivePolicies,
         totalPremium: db.policies.reduce((sum, p) => sum + (Number(p.premium) || 0), 0).toFixed(2)

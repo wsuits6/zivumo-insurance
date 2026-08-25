@@ -177,7 +177,12 @@
             '.tour-highlight{animation:tourGlow 1.5s ease-in-out infinite;border-radius:var(--radius-md);}',
             '@keyframes tourGlow{',
             '0%,100%{box-shadow:0 0 0 3px var(--primary-color),0 0 16px 4px rgba(11,110,110,.35);}',
-            '50%{box-shadow:0 0 0 3px var(--accent-color),0 0 26px 8px rgba(31,58,147,.4);}}'
+            '50%{box-shadow:0 0 0 3px var(--accent-color),0 0 26px 8px rgba(31,58,147,.4);}}',
+            '.complaints-fab{position:fixed;bottom:5.5rem;right:1.25rem;width:56px;height:56px;border-radius:var(--radius-pill);',
+            'border:none;background:linear-gradient(120deg,var(--secondary-color),var(--primary-color));color:#fff;cursor:pointer;',
+            'box-shadow:var(--shadow-lg);display:flex;align-items:center;justify-content:center;z-index:3000;transition:var(--transition);}',
+            '.complaints-fab:hover{transform:translateY(-3px) scale(1.05);}',
+            '.complaints-fab svg{width:26px;height:26px;}'
         ].join('');
         var style = document.createElement('style');
         style.id = 'tour-guide-styles';
@@ -223,6 +228,17 @@
                 '<button type="submit" class="tour-btn tour-btn-primary">Send</button>' +
             '</form>';
 
+        var complaintsFab = document.createElement('a');
+        complaintsFab.className = 'complaints-fab';
+        complaintsFab.id = 'complaintsFab';
+        complaintsFab.setAttribute('aria-label', 'File a Complaint');
+        complaintsFab.setAttribute('title', 'File a Complaint');
+        complaintsFab.href = window.location.pathname.includes('/pages/') ? 'complaints.html' : 'pages/complaints.html';
+        complaintsFab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>' +
+            '</svg>';
+
+        document.body.appendChild(complaintsFab);
         document.body.appendChild(fab);
         document.body.appendChild(widget);
 
