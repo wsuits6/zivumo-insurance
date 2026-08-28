@@ -33,7 +33,7 @@ function setupAdminLogin() {
 }
 
 /* ---------- Filter state ---------- */
-let currentUserFilter = 'active';
+let currentUserFilter = 'all';
 let currentPolicyFilter = 'active';
 
 /* ---------- Confirm delete modal ---------- */
@@ -406,6 +406,9 @@ function renderUsersTable(users, filter) {
 
     const tbody = document.getElementById('adminUsersTable');
     if (!tbody) return;
+
+    const totalUsersEl = document.getElementById('adminTotalUsers');
+    if (totalUsersEl) totalUsersEl.textContent = filtered.length;
 
     tbody.innerHTML = filtered.map((user) => {
         const isArchived = user.archived;

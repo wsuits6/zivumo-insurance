@@ -5,6 +5,8 @@ const path = require('path');
 const { loadEnv } = require('./config/env');
 loadEnv();
 
+const { saveDb } = require('./db');
+
 const createAuthRouter = require('./routes/auth');
 const createAdminRouter = require('./routes/admin');
 const createPoliciesRouter = require('./routes/policies');
@@ -35,6 +37,11 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '150kb' }));
 app.use(express.urlencoded({ extended: false }));
+
+app.use((_req, res, next) => {
+  res.on('finish', () => saveDb());
+  next();
+});
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, status: 'ok' });
